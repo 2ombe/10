@@ -1,0 +1,42 @@
+const mongoose = require("mongoose");
+
+const customerSchema = new mongoose.Schema({
+  CUSTOMER_ID: { type: String, required: true, unique: true },
+  CUSTOMER_NAME: { type: String, required: true },
+  CUSTOMER_OPEN_DATE: { type: String, required: true },
+  SALUTATION: { type: String, required: true },
+  SURNAME: { type: String, required: true },
+  FORENAME_1: { type: String, required: true },
+  FORENAME_2: { type: String },
+  CUSTOMER_ACRONYM: { type: String, required: true },
+  CUSTOMER_GENDER: {
+    type: String,
+    enum: ["Male", "Female", "Corporate", "Other"],
+  },
+  DATE_OF_BIRTH: { type: Date, required: true },
+  PLACE_OF_BIRTH: { type: String, required: true },
+  MARITAL_STATUS: { type: String, required: true },
+  SPOUSE_NAME: { type: String },
+  NEXT_OF_KIN_NAME: { type: String },
+  NEXT_OF_KIN_ID_TYPE: { type: String },
+  NEXT_OF_KIN_ID_NUMBER: { type: String },
+  NEXT_OF_KIN_TELEPHONE: { type: String },
+  NEXT_OF_KIN_EMAIL_ID: { type: String },
+  NUMBER_OF_DEPENDANTS: { type: Number, required: true },
+  ACCOUNT_MANDATE_NAME: { type: String },
+  ACCOUNT_MANDATE_ID_TYPE: { type: String },
+  ACCOUNT_MANDATE_ID_NUMBER: { type: String },
+  ValidityPeriod:{type:Date,required:true},
+  NATIONALITY: { type: String, required: true },
+  RESIDENCE: { type: String, required: true },
+  EMAIL_ID: { type: String, required: true },
+  WORK_TELEPHONE: { type: String, required: true },
+  HOME_TELEPHONE: { type: String, required: true },
+  CUSTOMER_TIN: { type: String },
+  NATIONAL_ID_TYPE: { type: String, required: true },
+  NATIONAL_ID_NUMBER: { type: String },
+  HEALTH_INSURANCE_NUMBER: { type: String },
+  OCCUPATION: { type: String, required: true },
+});
+
+module.exports = mongoose.model("Customer", customerSchema);

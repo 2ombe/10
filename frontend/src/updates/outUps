@@ -1,0 +1,395 @@
+import React, { useState, useEffect, useContext } from "react";
+import {
+  Form,
+  Button,
+  Container,
+  Row,
+  Col,
+  Table,
+} from "react-bootstrap";
+import axios from "axios";
+import Select from "react-select";
+import { useParams, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+
+const outpatientPremium = {
+  "75,000,000": {
+    M: 183674,
+    "M+1": 275511,
+    "M+2": 353573,
+    "M+3": 427808,
+    "M+4": 489798,
+    "M+5": 551788,
+    "M+6": 613778,
+    Extra: 675768,
+  },
+  "67,500,000": {
+    M: 176787,
+    "M+1": 269389,
+    "M+2": 346838,
+    "M+3": 420308,
+    "M+4": 482145,
+    "M+5": 543982,
+    "M+6": 605819,
+    Extra: 61837,
+  },
+};
+
+const UpdateCooperateForm = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { state } = useContext(AuthContext);
+  const { userInfo } = state;
+  const [totalMaternity, setTotalMaternity] = useState(0);
+  const [outData, setOutData] = useState({
+    outCart: {
+      outCategories: [],
+      outOverallTotals: {
+        outOverallTotalPremium: 0,
+        outOverallDependenciesTotal: 0,
+      },
+    },
+  });
+
+  useEffect(() => {
+    axios
+      .get(`/api/cooporate/single/${id}`, {
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      })
+      .then((response) => {
+        setOutData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, [id, userInfo]);
+
+  const handleoutLimitChange = (outCategoryId, e) => {
+    const newoutCategories = outData.outCart.outCategories.map((outCategory) =>
+      outCategory.outId === outCategoryId
+        ? { ...outCategory, outLimit: e.target.value }
+        : outCategory
+    );
+    setOutData({
+      ...outData,
+      outCart: { ...outData.outCart, outCategories: newoutCategories },
+    });
+  };
+
+  const handleOutDependencyChange = (outCategoryId, outLabel, e) => {
+    const value = parseInt(e.target.value) || 0;
+    const newoutCategories = outData.outCart.outCategories.map((outCategory) =>
+      outCategory.outId === outCategoryId
+        ? {
+            ...outCategory,
+            outDependencies: {
+              ...outCategory.outDependencies,
+              [outLabel]: value,
+            },
+          }
+        : outCategory
+    );
+    setOutData({
+      ...outData,
+      outCart: { ...outData.outCart, outCategories: newoutCategories },
+    });
+  };
+
+  const calculateoutOverallDependenciesTotal = (outCategory) => {
+    let overallTotal = 0;
+    const labels = Object.keys(outCategory.outTotalDependencies);
+    for (let i = 0; i < labels.length; i++) {
+      overallTotal += outCategory.outTotalDependencies[labels[i]] || 0;
+    }
+    return overallTotal;
+  };
+
+  const calculateOutTotalPremiumValue = (outCategory) => {
+    let totalOutPremiumValue = 0;
+    const memberLabels = Array.from(
+      { length: outCategory.outMembers + 1 },
+      (_, i) => (i === 0 ? "M" : `M+${i}`)
+    );
+    for (let i = 0; i < memberLabels.length; i++) {
+      const label = memberLabels[i];
+      const premiumValuePerMember =
+        (outpatientPremium[outCategory.outLimit]?.[label] || 0) *
+        (outCategory.outDependencies[label] || 0);
+      totalOutPremiumValue += premiumValuePerMember;
+    }
+    return totalOutPremiumValue;
+  };
+
+  const calculateoutOverallTotals = () => {
+    let outOverallTotalPremium = 0;
+    let outOverallDependenciesTotal = 0;
+    let totalOutStaffFamily = 0;
+    outData.outCart.outCategories.forEach((outCategory) => {
+      outOverallTotalPremium += calculateOutTotalPremiumValue(outCategory);
+      outOverallDependenciesTotal +=
+        calculateoutOverallDependenciesTotal(outCategory);
+      const totalMembers = Object.values(outCategory.outDependencies).reduce(
+        (sum, value) => sum + value,
+        0
+      );
+      totalOutStaffFamily += totalMembers;
+    });
+    return {
+      outOverallTotalPremium,
+      outOverallDependenciesTotal,
+      totalOutStaffFamily,
+    };
+  };
+
+  useEffect(() => {
+    const updatedoutCategories = outData.outCart.outCategories.map(
+      (outCategory) => {
+        let updatedTotalDependencies = { ...outCategory.outTotalDependencies };
+        const labels = Object.keys(outCategory.outDependencies);
+        for (let i = 0; i < labels.length; i++) {
+          const label = labels[i];
+          const value = outCategory.outDependencies[label] || 0;
+          let calculatedTotal = value;
+          if (label !== "M") {
+            const numDependents = parseInt(label.slice(2));
+            calculatedTotal += numDependents * value;
+          }
+          updatedTotalDependencies[label] = calculatedTotal;
+        }
+        let totalOutPremiumValue = calculateOutTotalPremiumValue(outCategory);
+        let totalOutPremiumMValue = totalOutPremiumValue;
+        const outPremiumValues = Object.keys(
+          outCategory.outDependencies
+        ).reduce((acc, key) => {
+          acc[key] = outpatientPremium[outCategory.outLimit]?.[key] || 0;
+          return acc;
+        }, {});
+        const outTotalPremiumValues = Object.keys(
+          outCategory.outDependencies
+        ).reduce((acc, key) => {
+          acc[key] =
+            (outpatientPremium[outCategory.outLimit]?.[key] || 0) *
+            (outCategory.outDependencies[key] || 0);
+          return acc;
+        }, {});
+        return {
+          ...outCategory,
+          outTotalDependencies: updatedTotalDependencies,
+          outTotalPremium: totalOutPremiumValue,
+          outTotalPremiumM: totalOutPremiumMValue,
+          outPremiumValues,
+          outTotalPremiumValues,
+        };
+      }
+    );
+    setOutData({
+      ...outData,
+      outCart: { ...outData.outCart, outCategories: updatedoutCategories },
+    });
+  }, [
+    outData.outCart.outCategories.map(
+      (outCategory) => outCategory.outDependencies
+    ),
+  ]);
+
+  const handleAddOutMember = (outId) => {
+    const newoutCategories = outData.outCart.outCategories.map((outCategory) =>
+      outCategory.outId === outId
+        ? { ...outCategory, outMembers: outCategory.outMembers + 1 }
+        : outCategory
+    );
+    setOutData({
+      ...outData,
+      outCart: { ...outData.outCart, outCategories: newoutCategories },
+    });
+  };
+
+  const handleRemoveOutMember = (outId) => {
+    const newoutCategories = outData.outCart.outCategories.map((outCategory) =>
+      outCategory.outId === outId && outCategory.outMembers > 0
+        ? {
+            ...outCategory,
+            outMembers: outCategory.outMembers - 1,
+            outDependencies: {
+              ...outCategory.outDependencies,
+              [`M+${outCategory.outMembers}`]: undefined,
+            },
+          }
+        : outCategory
+    );
+    setOutData({
+      ...outData,
+      outCart: { ...outData.outCart, outCategories: newoutCategories },
+    });
+  };
+
+  const handleAddoutCategory = () => {
+    const newCategory = {
+      outId: outData.outCart.outCategories.length + 1,
+      outLimit: "",
+      outMembers: 0,
+      outDependencies: {},
+      outTotalDependencies: {},
+      outTotalPremiumValues: {},
+      outPremiumValues: {},
+      outTotalPremium: 0,
+      outTotalPremiumM: 0,
+    };
+    setOutData({
+      ...outData,
+      outCart: {
+        ...outData.outCart,
+        outCategories: [...outData.outCart.outCategories, newCategory],
+      },
+    });
+  };
+
+  const renderoutCategoryTables = () => {
+    return outData.outCart.outCategories.map((category) => (
+      <div key={category.outId}>
+        <Row className="my-4">
+          <Col>
+            <h5>Category {category.outId}</h5>
+            <Form>
+              <Form.Group controlId={`outLimitSelect-${category.outId}`}>
+                <Form.Label>Select In Patient out Limit</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={category.outLimit}
+                  onChange={(e) => handleoutLimitChange(category.outId, e)}
+                >
+                  <option value="">Select...</option>
+                  {Object.keys(outpatientPremium).map((outLimitValue) => (
+                    <option key={outLimitValue} value={outLimitValue}>
+                      {outLimitValue}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+            </Form>
+          </Col>
+        </Row>
+        <Row className="my-4">
+          <Col>
+            <Button
+              style={{ marginRight: "1.2rem" }}
+              variant="secondary"
+              onClick={() => handleAddOutMember(category.outId)}
+            >
+              Add Member
+            </Button>
+            <Button
+              variant="danger"
+              onClick={() => handleRemoveOutMember(category.outId)}
+            >
+              Remove Member
+            </Button>
+          </Col>
+        </Row>
+        <Row className="my-4">
+          <Col>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Premium/family</th>
+                  <th>Number of staff/family</th>
+                  <th>Total lives</th>
+                  <th>Total Premium</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {Array.from({ length: category.outMembers + 1 }, (_, i) =>
+                  i === 0 ? "M" : `M+${i}`
+                ).map((label) => (
+                  <tr key={label}>
+                    <td>{label}</td>
+                    <td>{outpatientPremium[category.outLimit]?.[label]}</td>
+                    <td>
+                      <Form.Control
+                        type="number"
+                        value={category.outDependencies[label] || ""}
+                        onChange={(e) =>
+                          handleOutDependencyChange(category.outId, label, e)
+                        }
+                      />
+                    </td>
+                    <td>{category.outTotalDependencies[label]}</td>
+                    <td>
+                      {(outpatientPremium[category.outLimit]?.[label] || 0) *
+                        (category.outDependencies[label] || 0)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Col>
+          <Col>
+            <h4>
+              Total Premium Value: {calculateOutTotalPremiumValue(category)}
+            </h4>
+            <h4>
+              Overall Dependencies Total:{" "}
+              {calculateoutOverallDependenciesTotal(category)}
+            </h4>
+          </Col>
+        </Row>
+      </div>
+    ));
+  };
+  const handleSave = () => {
+    const outCart = { ...outData.outCart };
+
+    console.log(outData);
+
+    setOutData({ ...outData, outCart });
+    // Save the updated data to the server
+    // axios.put(`/api/cooporate/version/${id}`, outData, {
+    //   headers: { Authorization: `Bearer ${userInfo.token}` }
+    // })
+    //   .then(response => {
+    //     console.log('Data updated successfully:', response.data);
+    //     navigate('/cooporateList');
+    //   })
+    //   .catch(error => {
+    //     console.error('Error updating data:', error);
+    //   });
+  };
+
+  return (
+    <div>
+      <Container>
+        <Col>
+          <hr
+            style={{ border: "1rem solid black", backgroundColor: "black" }}
+          />
+          <h4>Update OutoutLimit</h4>
+
+          <hr
+            style={{ border: "1rem solid black", backgroundColor: "black" }}
+          />
+          <Row>
+            <h4>Update Out outLimit</h4>
+            <Button onClick={handleAddoutCategory}>Add Out category</Button>
+            {renderoutCategoryTables()}
+          </Row>
+          <hr
+            style={{ border: "1rem solid black", backgroundColor: "black" }}
+          />
+
+          <Form></Form>
+        </Col>
+        <Row>
+          <Col md={4}>
+            <Button variant="primary" onClick={handleSave}>
+              Update quotation
+            </Button>
+          </Col>
+        </Row>
+      </Container>
+    </div>
+  );
+};
+
+export default UpdateCooperateForm;
