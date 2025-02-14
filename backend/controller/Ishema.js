@@ -325,7 +325,9 @@ exports.downloadCertificate = async (req, res) => {
 .footer p {
   margin: 0; 
 }
-
+.page-break {
+            page-break-before: always;
+          }
         </style>
       </head>
       <body>
@@ -414,6 +416,13 @@ exports.downloadCertificate = async (req, res) => {
             <h3>Total Premium: ${data.options[
               data.plan
             ].totalPremium.toLocaleString()}</h3>
+          </div>
+            <div >
+           <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
+         <h3>NB: Outpatient, Optical and dental claims are paid subject to 10% copay. Inpatient and
+maternity are covered 100% by insurer.</h3>
+
+<p>Kindly issue a cheque or transfer instructions payable to Old mutual Insurance Rwanda as per the above quotation.	</p>
           </div>
           <div class="footer">
             <p>Created by: ${data.user.name} (${data.user.role})</p>

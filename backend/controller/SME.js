@@ -307,6 +307,9 @@ exports.downloadCertificate = async (req, res) => {
 .footer p {
   margin: 0; 
 }
+  .page-break {
+            page-break-before: always;
+          }
 
         </style>
       </head>
@@ -398,7 +401,8 @@ exports.downloadCertificate = async (req, res) => {
             </table>
 
           </div>
-          <div>
+          <div class="page-break">
+           <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
          <h3>NB: Outpatient, dental and optical claims shall be payable subject to 10% copay by the member.	</h3>
 <h3>All medical claims have a waiting period of 28 days, exception being a case of an accident.	</h3>
 <h3>Pre-exisiting and newly diagnosed chronic conditions have a waiting period of 1 year.	</h3>

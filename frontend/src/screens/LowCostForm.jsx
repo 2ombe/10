@@ -86,10 +86,17 @@ function LowCost() {
   const { state, dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
   const { cart } = state;
+  console.log(cart);
+  
+  const totalMembers=JSON.parse(localStorage.getItem('totalMembers'))
   const members = cart.principalCount + cart.spouseCount + cart.childCount;
   const [quotationData, setQuotationData] = useState({
     benefits:cart.retailBenefitOptions,
+    totalMembers:totalMembers,
     beneficiaryInfo:cart.retailInfo,
+    children:cart.children,
+    principalAgeGroup:cart.principalAgeGroup,
+    spouseAgeGroup:cart.spouseAgeGroup,
     plan: 'Low cost Quotation',
     options: {
       'Bronze': {

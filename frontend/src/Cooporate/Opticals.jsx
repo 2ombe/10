@@ -5,7 +5,7 @@ import { Form, FormControl } from 'react-bootstrap';
 
 const consideredCategory = {
   premiumPerFamily: "Premium per family",
-  premiumPerPerson: "Premium per Company"
+  premiumPerPerson: "Premium per Person"
 };
 
 function Opticals() {
@@ -28,7 +28,7 @@ function Opticals() {
      
 </Form>
 
-      {selectedCategory === 'premiumPerCompany' && <CooporateOptical selectedCategory={selectedCategory}/>}
+      {selectedCategory === 'premiumPerPerson' && <CooporateOptical selectedCategory={selectedCategory}/>}
       {selectedCategory === 'premiumPerFamily' && <CooporateOpticalPerFamily selectedCategory={selectedCategory}/>}
     </div>
   );

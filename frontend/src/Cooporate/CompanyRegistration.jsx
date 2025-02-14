@@ -10,8 +10,8 @@ const CompanyRegistration = () => {
   const { dispatch } = useContext(AuthContext);
   const nanoid6 = customAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", 6)
   const id = nanoid6(); 
-  const savedCompanyData = JSON.parse(localStorage.getItem("companyInfo"))
-  const [formData, setFormData] = useState(savedCompanyData||{
+
+  const [formData, setFormData] = useState({
     CUSTOMER_ID:`OM/RW/Co-${id}`,
     salutation: "",
     institutionName: "",

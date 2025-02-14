@@ -598,7 +598,7 @@ exports.downloadCooperateCertificate = async (req, res) => {
             OLD MUTUAL MEDICAL INSURANCE SCHEME CORPORATE PROPOSAL FOR
 STAFF &amp; DEPENDANTS </h3>
 <p>
-OLD MUTUAL Insurance Rwanda was licensed in 2012 under the names of UAP
+OLD MUTUAL Insurance Rwanda was licensed in 2012 under the names of Old Mutual
 and started operations in 2013. OLD MUTUAL INSURANCE RWANDA PLC is a
 wholly owned subsidiary of OLD MUTUAL Holdings Limited, a Pan-African
 Investment Company, which is engaged in financial services ranging from insurance,
@@ -610,7 +610,7 @@ Currently OLD MUTUAL has twelve (12) businesses operating in 6 markets i.e.
 Rwanda, Kenya, Uganda, South Sudan, DRC and Tanzania. OLD MUTUAL Holdings
 ltd is the holding company for the various OLD MUTUAL Subsidiaries and its offices
 are based in South Africa. The subsidiaries which transact insurance business are 6,
-investment 3, property 3 and insurance brokerage in DRC. In June 2015, UAP
+investment 3, property 3 and insurance brokerage in DRC. In June 2015, Old Mutual
 Holdings was acquired by Old Mutual and is now member of the OLD MUTUAL
 Group.
 </p>
@@ -831,43 +831,7 @@ to join the medical scheme</li>
 <li>The contact persons between the two organizations shall be availed at the
 start of the policy.</li>
           </ol>
-          </div>
-          <div >
-          <h2>COVER TERMS</h2>
-          <p>
-Note the following:
-          </p>
-         
-          </div>
-          <div>
-          <h3>1. Panel of Providers</h3>
-          <p>
-The Old Mutual Insurance panel of providers shall provide the treatment. In
-case a patient is treated at a facility that is not in our panel, Old Mutual
-Insurance will reimburse claims incurred based on prevailing tariffs.
-          </p>
-         
-          </div>
-          <div>
-          <h3>2. Inpatient Treatment</h3>
-          <p>
-We shall provide coverage for all confirmed cases up to a sub limit of ${inpatientTreatmentValues} Rwf
- within the overall inpatient limit. Treatment will be for
-asymptomatic/mild/moderate cases and serious/critical cases requiring
-ICU/HDU care.
-Note that inpatient coverage shall only apply to those confirmed to have
-COVID-19 and need treatment within a hospital setting.
-          </p>
-         
-          </div>
-          <div>
-          <h3>3. Outpatient Treatment</h3>
-          <p>
-We shall cater for outpatient treatment for members confirmed to have
-COVID-19. We shall cater for the cost of consultation, testing and prescribed
-drugs up to the full outpatient limit.
-          </p>
-         
+          </div>  
           </div>
           
           <div class="page-break">
@@ -880,10 +844,10 @@ drugs up to the full outpatient limit.
 either public or private</li>
 <li> Member is referred to a health facility (either private or public)
 for management.</li>
-<li> For those in our panel of providers, UAP undertakes the case in
+<li> For those in our panel of providers, Old Mutual undertakes the case in
 the usual manner. For those who are in providers we don’t
 partner with, they incur the bill and seek reimbursement from
-UAP Insurance Rwanda Ltd. Reimbursement shall be based on
+Old Mutual Insurance Rwanda Ltd. Reimbursement shall be based on
 prevailing tariffs.</li>
 <li> The Case Management Team shall be actively involved in such
 cases with daily reports provided.</li>
@@ -976,3 +940,5 @@ where a bill is paid out of pocket.</td>
     stream.pipe(res);
   });
 };
+
+

@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
 
+const childSchema = new mongoose.Schema({
+  ageGroup: { type: String, required: true },
+  above18: { type: Boolean, required: true },
+});
+
 const memberSchema = new mongoose.Schema({
   type: { type: String, required: true },
   age: { type: Number, required: true },
@@ -22,7 +27,7 @@ const quotationSchema = new mongoose.Schema({
     CUSTOMER_ID: { type: String, required: true, unique: true },
     CUSTOMER_NAME: { type: String },
     CUSTOMER_OPEN_DATE: { type: String },
-    SALUTATION: { type: String},
+    SALUTATION: { type: String },
     SURNAME: { type: String },
     FORENAME_1: { type: String },
     FORENAME_2: { type: String },
@@ -32,28 +37,25 @@ const quotationSchema = new mongoose.Schema({
       enum: ["Male", "Female", "Corporate", "Other"],
     },
     DATE_OF_BIRTH: { type: Date },
-    PLACE_OF_BIRTH: { type: String},
+    PLACE_OF_BIRTH: { type: String },
     MARITAL_STATUS: { type: String },
-    SPOUSE_NAME: { type: String },
-   
-    NUMBER_OF_DEPENDANTS: { type: Number },
     ACCOUNT_MANDATE_NAME: { type: String },
     ACCOUNT_MANDATE_ID_TYPE: { type: String },
     ACCOUNT_MANDATE_ID_NUMBER: { type: String },
-    NATIONALITY: { type: String, default:"Rwanda"},
+    NATIONALITY: { type: String, default: "Rwanda" },
     RESIDENCE: { type: String },
     EMAIL_ID: { type: String },
-    WORK_TELEPHONE: { type: String },
     HOME_TELEPHONE: { type: String },
-    CUSTOMER_TIN: { type: String },
     NATIONAL_ID_TYPE: { type: String },
     NATIONAL_ID_NUMBER: { type: String },
-    HEALTH_INSURANCE_NUMBER: { type: String },
-    OCCUPATION: { type: String},
+    OCCUPATION: { type: String },
   },
   plan: { type: String, required: true },
   discount: { type: Number, default: 1 },
   members: [memberSchema],
+  children: [childSchema],
+  principalAgeGroup: { type: String, required: true },
+  spouseAgeGroup: { type: String },
   options: {
     Bronze: optionSchema,
     Silver: optionSchema,
@@ -80,8 +82,9 @@ const quotationSchema = new mongoose.Schema({
     ],
     default: "Waiting",
   },
+  totalMembers:{type:Number},
   createdAt: { type: Date, default: Date.now },
-  ValidityPeriod:{type:Date,required:true},
+  ValidityPeriod: { type: Date, required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   updatedBy: {
     type: mongoose.Schema.Types.ObjectId,

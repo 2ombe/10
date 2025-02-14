@@ -12,7 +12,7 @@ const { Quotation } = require("../models/ishema");
 
 exports.createQuotation = async (req, res) => {
   try {
-    const { plan, members, benefits, options, beneficiaryInfo } = req.body;
+    const { plan, members, benefits, options, beneficiaryInfo,children,principalAgeGroup,spouseAgeGroup } = req.body;
     const user = req.user._id;
     const ValidityPeriod = new Date();
     ValidityPeriod.setMonth(ValidityPeriod.getMonth() + 1);
@@ -23,6 +23,7 @@ exports.createQuotation = async (req, res) => {
       beneficiaryInfo,
       benefits,
       options,
+      children,principalAgeGroup,spouseAgeGroup,
       user,
     });
 
@@ -322,7 +323,9 @@ exports.downloadCertificate = async (req, res) => {
 .footer p {
   margin: 0; 
 }
-
+.page-break {
+            page-break-before: always;
+          }
         </style>
       </head>
       <body>
@@ -412,14 +415,15 @@ exports.downloadCertificate = async (req, res) => {
             </table>
 
           </div>
-          <div>
+          <div class="page-break">
+           <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
          <h3>NB: Outpatient, dental and optical claims shall be payable subject to 10% copay by the member.	</h3>
-<h3>All medical claims have a waiting period of 28 days, exception being a case of an accident.	</h3>
-<h3>Pre-exisiting and newly diagnosed chronic conditions have a waiting period of 1 year.	</h3>
-<h3>Maternity is subject to a waiting period of 1 year.	</h3>
-<h3>Members over the age of 60 will have to undergo medical checkup and results submitted to OM medical team.	</h3>
-<h3>(A medical examination form will be provided along with the quotation)	</h3>
-<h3>(Exams done at BWIZA Clinic in CHIK building at subsidized rates)	</h3>
+<h4>All medical claims have a waiting period of 28 days, exception being a case of an accident.	</h4>
+<h4>Pre-exisiting and newly diagnosed chronic conditions have a waiting period of 1 year.	</h4>
+<h4>Maternity is subject to a waiting period of 1 year.	</h4>
+<h4>Members over the age of 60 will have to undergo medical checkup and results submitted to OM medical team.	</h4>
+<h4>(A medical examination form will be provided along with the quotation)	</h4>
+<h4>(Exams done at BWIZA Clinic in CHIK building at subsidized rates)	</h4>
 	
 	
 <p>Kindly issue a cheque or transfer instructions payable to Old mutual Insurance Rwanda as per the above quotation.	</p>
