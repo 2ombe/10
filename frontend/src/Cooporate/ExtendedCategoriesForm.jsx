@@ -1,9 +1,8 @@
 import React, { useState, useContext } from "react";
-import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import { Form, Button, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import CheckOutCooporateSteps from "../component/CheckOutCooporateSteps";
 import { AuthContext } from "../context/AuthContext";
-
 
 const ExtendedCategoriesForm = () => {
   const navigate = useNavigate();
@@ -13,7 +12,7 @@ const ExtendedCategoriesForm = () => {
     congenitalConditions: "",
     inpatientOphthalmology: "",
     inpatientDentalCover: "",
-    inpatientTreatment: "",
+    validityPeriod: "",
   });
 
   const handleChange = (e) => {
@@ -38,7 +37,7 @@ const ExtendedCategoriesForm = () => {
             name="chronicPercentage"
             value={formData.chronicPercentage}
             onChange={handleChange}
-            required
+            
           />
         </Form.Group>
 
@@ -49,7 +48,7 @@ const ExtendedCategoriesForm = () => {
             name="congenitalConditions"
             value={formData.congenitalConditions}
             onChange={handleChange}
-            required
+            
           />
         </Form.Group>
 
@@ -60,7 +59,7 @@ const ExtendedCategoriesForm = () => {
             name="inpatientOphthalmology"
             value={formData.inpatientOphthalmology}
             onChange={handleChange}
-            required
+            
           />
         </Form.Group>
 
@@ -71,18 +70,18 @@ const ExtendedCategoriesForm = () => {
             name="inpatientDentalCover"
             value={formData.inpatientDentalCover}
             onChange={handleChange}
-            required
+            
           />
         </Form.Group>
 
-        <Form.Group controlId="inpatientTreatment">
+        <Form.Group controlId="validityPeriod">
           <Form.Label>Inpatient Treatment</Form.Label>
           <Form.Control
             type="text"
-            name="inpatientTreatment"
-            value={formData.inpatientTreatment}
+            name="validityPeriod"
+            value={formData.validityPeriod}
             onChange={handleChange}
-            required
+            
           />
         </Form.Group>
 

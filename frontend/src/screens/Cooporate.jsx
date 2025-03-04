@@ -369,10 +369,10 @@ console.log(blockerInfo);
             <Card.Body>
               <Card.Title>Cooporate Info</Card.Title>
               <Card.Text>
-                <strong>Corporate Name:</strong> {companyInfo.institutionName
+                <strong>Corporate Name:</strong> {companyInfo.institutionName||""
 }
                 <br />
-                <strong>Corporate Tin:</strong> {companyInfo.tin
+                <strong>Corporate Tin:</strong> {companyInfo.tin||""
 }
                 <br />
                 <strong>All Insured Members:</strong> {cooporateCart.overallTotals.overallDependenciesTotal}

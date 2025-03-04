@@ -464,23 +464,7 @@ const [loadings,setLoadings]=useState("")
         </Col>
       </Row>
         )}
-        {(userInfo.role===("senior_underwriter")||userInfo.role===("medical_manager")||userInfo.role===("operational_manager"))&&(cooporate.overAllPremiumTotal>100000000&&cooporate.overAllPremiumTotal<=300000000)&&(
-
-      <Col>
-      <ListGroup.Item>
-              <strong>Discount:</strong> {discount}%
-              <input
-                type="number"
-                value={discount}
-                onChange={(e) => setDiscount(Number(e.target.value))}
-                className="ms-2"
-              />
-            </ListGroup.Item>
-      <Button variant="success" onClick={() => updateStatus('Approved')}>
-        Approve
-      </Button>
-      </Col>
-        )}
+       
         {(userInfo.role===("senior_underwriter")||userInfo.role===("medical_manager")||userInfo.role===("operational_manager"))&&(cooporate.overAllPremiumTotal>300000000&&cooporate.overAllPremiumTotal<=500000000)&&(
 
       <Col>

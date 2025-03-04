@@ -101,15 +101,7 @@ const RetailDetails = () => {
       <Row>
           <Card className="mb-3">
             <Card.Body>
-              <Card.Title>Client Info</Card.Title>
-              {/* <Card.Text>
-                <strong>Client Names:</strong> {quotation.beneficiaryInfo.CUSTOMER_NAME}
-                <br />
-                <strong>Client Address:</strong> {quotation.beneficiaryInfo.CUSTOMER_ID}
-                <br />
-               
-              </Card.Text> */}
-             
+              <Card.Title>Client Info</Card.Title>             
             </Card.Body>
           </Card>
         </Row>
@@ -138,6 +130,7 @@ const RetailDetails = () => {
             <th>Plan</th>
             <th>Status</th>
             <th>Created At</th>
+            <th>Total lives</th>
           </tr>
         </thead>
         <tbody>
@@ -145,28 +138,44 @@ const RetailDetails = () => {
             <td>{quotation.plan}</td>
             <td>{quotation.status}</td>
             <td>{new Date(quotation.createdAt).toLocaleDateString()}</td>
+            <td>{quotation.totalMembers}</td>
           </tr>
         </tbody>
       </Table>
 
-      <h3>Members</h3>
       <Table striped bordered hover>
-        <thead>
+      <thead>
           <tr>
-            <th>Type</th>
-            <th>Age</th>
+
+          <th>Principle Age Group</th>
+          <th>Spause Age Group</th>
           </tr>
         </thead>
         <tbody>
-          {quotation.members.map((member, index) => (
+          <tr>
+
+          <td>{quotation.principalAgeGroup||""}</td>
+          <td>{quotation.spouseAgeGroup||""}</td>
+          </tr>
+        </tbody>
+        <h4>Children Info</h4>
+        <thead>
+          <tr>
+            <th>Age Group</th>
+            <th>Above 18</th>
+          </tr>
+        </thead>
+        <tbody>
+          {quotation.children.map((child, index) => (
             <tr key={index}>
-              <td>{member.type}</td>
-              <td>{member.age}</td>
+              <td>{child.ageGroup||""}</td>
+              <td>{child.above18 ? 'Yes' : 'No'}</td>
             </tr>
           ))}
         </tbody>
+        
       </Table>
-
+  
       <h3>Options</h3>
       <Table striped bordered hover>
         <thead>
@@ -219,25 +228,6 @@ const RetailDetails = () => {
       {message && <Alert variant="success">{message}</Alert>}
 
 
-      {userInfo&&(userInfo._id!==quotation.user._id&&userInfo.role==="senior_underwriter")&&(quotation.status!==("Rejected"||"Accepted"||"Approved"))&&(
-        <>
-      <Col>
-      {/* <Button variant="success" onClick={() => updateStatus('Approved')}>
-        Approve
-      </Button> */}
-      </Col>
-</>
-      )}
-      {userInfo&&(userInfo._id!==quotation.user._id&&userInfo.role==="senior_underwriter")&&(quotation.status!==("Rejected"||"Accepted"||"Block"))&&(
-        <>
-      <Col>
-      {/* <Button variant="danger" onClick={() => updateStatus('Block')}>
-        Block
-      </Button> */}
-      </Col>
-</>
-      )}
-
 <Col>
       <Button variant='success' onClick={()=>navigate(`/retailInfo/${quotation._id}`)}>
                   Revise
@@ -247,21 +237,7 @@ const RetailDetails = () => {
       {userInfo&&(userInfo._id===quotation.user._id)&&(quotation.status!=="Block")&&(
         <Row>
      
-    {quotation.status==="Approved"&&(
-{/* <Row>
-    <Col>
-    <Button style={{marginTop:"2rem"}} variant="success" onClick={() => updateStatus('Accepted')}>
-        Closed
-      </Button>
-    </Col>
     
-    <Col>
-    <Button variant="success" onClick={() => updateStatus('Rejected')}>
-        Reject by client
-      </Button>
-    </Col>
-</Row> */}
-    )}     
 </Row>
       )}
                 </Col>

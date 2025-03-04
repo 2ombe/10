@@ -69,7 +69,7 @@ const CompanyRegistration = () => {
               name="institutionName"
               value={formData.institutionName}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
          
@@ -80,7 +80,7 @@ const CompanyRegistration = () => {
               name="tin"
               value={formData.tin}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -90,7 +90,7 @@ const CompanyRegistration = () => {
               name="countryOfRegistration"
               value={formData.countryOfRegistration}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -100,7 +100,7 @@ const CompanyRegistration = () => {
               name="dateOfRegistration"
               value={formData.dateOfRegistration}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -110,7 +110,7 @@ const CompanyRegistration = () => {
               name="telephoneNumber"
               value={formData.telephoneNumber}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -120,7 +120,7 @@ const CompanyRegistration = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -139,7 +139,7 @@ const CompanyRegistration = () => {
               name="town"
               value={formData.town}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -149,7 +149,7 @@ const CompanyRegistration = () => {
               name="corporateCategory"
               value={formData.corporateCategory}
               onChange={handleChange}
-              required
+              
             >
               <option value="">--Select corporate category--</option>
               <option value="Micro Enterprises">Micro Enterprises</option>

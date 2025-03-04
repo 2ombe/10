@@ -138,8 +138,13 @@ import ExtendedCategoriesForm from "./Cooporate/ExtendedCategoriesForm.jsx";
 import AddAgentOrBlocker from "./Cooporate/AddBlockerAndAgent.jsx";
 import LastExpenseForm from "./Cooporate/LastExpenseForm.jsx";
 import GeneralInclusions from "./Cooporate/GeneralInclusions.jsx";
+import AdminCount from "./screens/AdminCount.jsx";
+import AdminRole from "./screens/AdminRole.jsx";
+import UpdateDentals from "./screens/updateCooporate/UpdateDentals.jsx";
+import UpdateOpticals from "./screens/updateCooporate/UpdateOpticals.jsx";
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(AuthContext);
+  const {userInfo}=state
   const signoutHandler = () => {
     ctxDispatch({ type: "USER_SIGNOUT" });
     window.location.href = "/";
@@ -184,6 +189,8 @@ function App() {
             >
               {state.userInfo && (
                 <Nav className="me-auto w-100 justify-content-end">
+                  {userInfo.role!=="admin"&&(
+<>
                   <NavDropdown title="Closed">
                     <LinkContainer to="/closedretail">
                       <Nav.Link>Retail</Nav.Link>
@@ -287,6 +294,8 @@ function App() {
                       <Nav.Link>SME</Nav.Link>
                     </LinkContainer>
                   </NavDropdown>
+</>
+                  )}
 
                   <NavDropdown
                     title={state.userInfo.name}
@@ -400,11 +409,11 @@ function App() {
               />
               <Route
                 path="/updateDental/:id"
-                element={<UpdateDental/>}
+                element={<UpdateDentals/>}
               />
               <Route
                 path="/UpdateCooporateOptical/:id"
-                element={<UpdateCooporateOptical/>}
+                element={<UpdateOpticals/>}
               />
               <Route
                 path="/UpdateCooporateMaternity/:id"
@@ -624,7 +633,14 @@ function App() {
                 element={<GeneralInclusions />}
               />
               <Route exact path="/denta" element={<Dentals />} />
-              <Route exact path="/welcome" element={<Count />} />
+              {userInfo&&(userInfo.role===("assistant_underwriter"||"underwriter")?(
+
+<Route exact path="/welcome" element={<Count />} />
+):(userInfo.role==="admin")?(
+  <Route exact path="/welcome" element={<AdminRole />} />
+):(
+<Route exact path="/welcome" element={<AdminCount/>} />
+))}
               <Route exact path="/corpBenefits" element={<CorpBenefits />} />
               <Route
                 exact

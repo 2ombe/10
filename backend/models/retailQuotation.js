@@ -5,11 +5,6 @@ const childSchema = new mongoose.Schema({
   above18: { type: Boolean, required: true },
 });
 
-const memberSchema = new mongoose.Schema({
-  type: { type: String, required: true },
-  age: { type: Number, required: true },
-});
-
 const optionSchema = new mongoose.Schema({
   totalInpatientPremium: { type: Number, required: true },
   totalOutpatientPremium: { type: Number, required: true },
@@ -32,10 +27,7 @@ const quotationSchema = new mongoose.Schema({
     FORENAME_1: { type: String },
     FORENAME_2: { type: String },
     CUSTOMER_ACRONYM: { type: String },
-    CUSTOMER_GENDER: {
-      type: String,
-      enum: ["Male", "Female", "Corporate", "Other"],
-    },
+    
     DATE_OF_BIRTH: { type: Date },
     PLACE_OF_BIRTH: { type: String },
     MARITAL_STATUS: { type: String },
@@ -52,7 +44,6 @@ const quotationSchema = new mongoose.Schema({
   },
   plan: { type: String, required: true },
   discount: { type: Number, default: 1 },
-  members: [memberSchema],
   children: [childSchema],
   principalAgeGroup: { type: String, required: true },
   spouseAgeGroup: { type: String },
@@ -82,7 +73,7 @@ const quotationSchema = new mongoose.Schema({
     ],
     default: "Waiting",
   },
-  totalMembers:{type:Number},
+  totalMembers:{type:Number,required:true},
   createdAt: { type: Date, default: Date.now },
   ValidityPeriod: { type: Date, required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },

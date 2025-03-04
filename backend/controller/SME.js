@@ -45,7 +45,7 @@ exports.getQuotation = async (req, res) => {
 };
 exports.allSMEs = async (req, res) => {
   try {
-    const savedQuotation = await SME.find();
+    const savedQuotation = await SME.find({user:req.user});
     if (savedQuotation.length === 0) {
       return res.status(404), json({ message: "No saved SMEs quotation" });
     }
@@ -78,7 +78,7 @@ exports.updateCooperateStatus = async (req, res) => {
 
 exports.count = async (req, res) => {
   try {
-    const count = await SME.countDocuments();
+    const count = await SME.countDocuments({user:req.user});
     res.status(200).json(count);
   } catch (err) {
     console.error(err);
@@ -121,6 +121,7 @@ exports.getPendingQuotationsByMonth = async (req, res) => {
 
     const quotations = await SME.find({
       status: "Waiting",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -144,6 +145,7 @@ exports.acceptedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const closed = await SME.find({
       status: "Accepted",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -167,6 +169,7 @@ exports.approvedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const approved = await SME.find({
       status: "Approved",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -189,6 +192,7 @@ exports.rejectedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const rejected = await SME.find({
       status: "Rejected",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -211,6 +215,7 @@ exports.blockedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const blocked = await SME.find({
       status: "Block",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })

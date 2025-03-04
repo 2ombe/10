@@ -52,7 +52,7 @@ exports.getQuotation = async (req, res) => {
 
 exports.getAllQuotation = async (req, res) => {
   try {
-    const quotations = await LowCostQuotation.find();
+    const quotations = await LowCostQuotation.find({user:req.user});
     res.status(200).json(quotations);
   } catch (error) {
     res.status(404).json(error);
@@ -96,6 +96,7 @@ exports.getPendingQuotationsByMonth = async (req, res) => {
 
     const quotations = await LowCostQuotation.find({
       status: "Waiting",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -119,6 +120,7 @@ exports.acceptedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const closed = await LowCostQuotation.find({
       status: "Accepted",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -142,6 +144,7 @@ exports.approvedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const approved = await LowCostQuotation.find({
       status: "Approved",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -164,6 +167,7 @@ exports.rejectedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const rejected = await LowCostQuotation.find({
       status: "Rejected",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -186,6 +190,7 @@ exports.blockedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const blocked = await LowCostQuotation.find({
       status: "Block",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -221,7 +226,7 @@ exports.updateCooperateStatus = async (req, res) => {
 
 exports.count = async (req, res) => {
   try {
-    const count = await LowCostQuotation.countDocuments();
+    const count = await LowCostQuotation.countDocuments({user:req.user});
     res.status(200).json(count);
   } catch (err) {
     console.error(err);

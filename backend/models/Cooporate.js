@@ -78,6 +78,12 @@ const quotationSchema = new mongoose.Schema(
       email: { type: String, default: null },
       phoneNumber: { type: String, default: null },
     },
+    requestedLimit:{
+      requestedInpatientLimit:{type:Number},
+      requestedOutPatientLimit:{type:Number},
+      requestedOpticalLimit:{type:Number},
+      requestedDentalLimit:{type:Number}
+    },
     selectedBenefits: [
       {
         value: { type: String, required: true },

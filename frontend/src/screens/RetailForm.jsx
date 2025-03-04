@@ -88,6 +88,7 @@ function RetailForm() {
   const { cart } = state;
   const totalMembers=JSON.parse(localStorage.getItem('totalMembers'))
 
+
   const members = cart.principalCount + cart.spouseCount + cart.childCount;
   const [quotationData, setQuotationData] = useState({
     benefits:cart.retailBenefitOptions,
@@ -238,8 +239,7 @@ function RetailForm() {
                 <br />
                 <strong>Client Id:</strong> {cart.retailInfo.CUSTOMER_ID
                 }
-               
-               
+                             
               </Card.Text>
              
             </Card.Body>

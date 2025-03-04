@@ -9,6 +9,7 @@ exports.createCooporate = async (req, res) => {
   const {
     companyInfo,
     agentData,
+    requestedLimit,
     selectedBenefits,
     selectedOpticalBenefits,
     selectedDentalBenefits,
@@ -27,7 +28,7 @@ exports.createCooporate = async (req, res) => {
     status,
     agentCart,
     lastExpenseCart,
-    generalInclusionBenefits
+    generalInclusionBenefits,
   } = req.body;
 
   const ValidityPeriod = new Date();
@@ -56,7 +57,7 @@ exports.createCooporate = async (req, res) => {
     status,
     agentCart,
     lastExpenseCart,
-    generalInclusionBenefits
+    generalInclusionBenefits,
   });
 
   try {
@@ -131,6 +132,15 @@ exports.getCooporateById = async (req, res) => {
 };
 
 exports.docs = async (req, res) => {
+  try {
+    const count = await Cooperate.countDocuments({ createdBy: req.user });
+    res.status(200).json(count);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+exports.AllDocs = async (req, res) => {
   try {
     const count = await Cooperate.countDocuments();
     res.status(200).json(count);
@@ -265,7 +275,7 @@ exports.searchCooperateByInstitutionName = async (req, res) => {
 
   try {
     const results = await Cooperate.find({
-      "companyInfo.institutionName": { $regex: institutionName, $options: "i" }, 
+      "companyInfo.institutionName": { $regex: institutionName, $options: "i" },
     });
 
     if (results.length === 0) {
@@ -313,7 +323,7 @@ exports.updateCooperate = async (req, res) => {
 exports.updateCooperateStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, discount,loadings } = req.body;
+    const { status, discount, loadings } = req.body;
 
     const quotation = await Cooperate.findById(id);
     if (!quotation) {
@@ -329,7 +339,7 @@ exports.updateCooperateStatus = async (req, res) => {
           (quotation.overAllPremiumTotal * discount) / 100);
       quotation.updatedBy = req.user;
       await quotation.save();
-    }else if(loadings){
+    } else if (loadings) {
       quotation.status = status;
       quotation.loadings = loadings;
       (quotation.ValidityPeriod = ValidityPeriod),
@@ -368,10 +378,9 @@ exports.downloadCooperateCertificate = async (req, res) => {
     data.extendedCategoriesCart.extendedCategories.map(
       (extended) => extended.inpatientOphthalmology
     );
-  const inpatientChronic =
-    data.extendedCategoriesCart.extendedCategories.map(
-      (extended) => extended.chronicPercentage
-    );
+  const inpatientChronic = data.extendedCategoriesCart.extendedCategories.map(
+    (extended) => extended.chronicPercentage
+  );
   const formattedDate = new Date(data.ValidityPeriod).toLocaleDateString(
     "en-GB",
     {
@@ -385,10 +394,13 @@ exports.downloadCooperateCertificate = async (req, res) => {
     data.extendedCategoriesCart.extendedCategories.map(
       (extended) => extended.inpatientDentalCover
     );
-  const inpatientTreatmentValues =
-    data.extendedCategoriesCart.extendedCategories.map(
-      (extended) => extended.inpatientTreatment
-    );
+  const proposeInpatientLimit =
+    data.requestedLimit.requestedInpatientLimit || 0;
+  const proposeOutpatientLimit =
+    data.requestedLimitrequestedOutPatientLimit || 0;
+  const proposeDentalLimit = data.requestedLimit.requestedDentalLimit || 0;
+  const proposeOpticalLimit = data.requestedLimit.requestedOpticalLimit || 0;
+  const proposeMaternityLimit = data.requestedLimit.maternityLimit || 0;
 
   const generateCategoryTable = (
     category,
@@ -401,7 +413,36 @@ exports.downloadCooperateCertificate = async (req, res) => {
     const labels = Array.from({ length: category.members + 1 }, (_, i) =>
       i === 0 ? "M" : `M+${i}`
     );
+    const basicPremiumValue =
+      (category.totalPremium || 0) +
+      (outCategory?.outTotalPremium || 0) +
+      (dentalCategory?.dentalTotalPremium || 0) +
+      (opticalCategory?.opticalTotalPremium || 0) +
+      (maternityCategory.RatePerFamily * category.totalStaffPerCategory || 0);
 
+    const mutuelleDesanteValue = basicPremiumValue * 0.05;
+    const adminFee =
+      10000 * data.cooporateCart.overallTotals.overallDependenciesTotal;
+    const inpatientLimit =
+      proposeInpatientLimit !== 0
+        ? proposeInpatientLimit
+        : Number(category.limit.replace(/\D/g)) || "";
+    const outpatientLimit =
+      proposeOutpatientLimit !== 0
+        ? proposeOutpatientLimit
+        : Number(outCategory.outLimit?.replace(/\D/g)) || 0;
+    const maternityLimit =
+      proposeMaternityLimit !== 0
+        ? proposeMaternityLimit
+        : Number(maternityCategory.MaternityCoverLimit) || 0;
+    const opticalLimit =
+      proposeOpticalLimit !== 0
+        ? proposeOpticalLimit
+        : Number(opticalCategory.opticalLimit?.replace(/\D/g)) || 0;
+    const dentalLimit =
+      proposeDentalLimit !== 0
+        ? proposeDentalLimit
+        : Number(dentalCategory.dentalLimit?.replace(/\D/g)) || 0;
     return `
       <table class="table">
       <thead>
@@ -411,45 +452,47 @@ exports.downloadCooperateCertificate = async (req, res) => {
       </tr>
       </thead>
       <tr>
-      <td>Inpatient</td>
-    <td>${category.limit||""}</td>
-      <td>Per family</td>
+      <td>{Inpatient}</td>
+    <td>${inpatientLimit.toLocaleString()}</td>
+      <td>${category.limit}</td>
       </tr>
       <tr>
       <td>Outpatient</td>
-     <td>${outCategory.outLimit?.toLocaleString()||0}</td>
+     <td>${outpatientLimit.toLocaleString()}</td>
       <td>Per family</td>
       </tr>
       <tr>
       <td>Maternity</td>
-      <td>${maternityCategory.MaternityCoverLimit?.toLocaleString() || 0}</td>
+      <td>${maternityLimit.toLocaleString()}</td>
       <td>Per family</td>
       </tr>
       <tr>
       <td>Optical</td>
-      <td>${opticalCategory.opticalLimit?.toLocaleString()||0}</td>
+      <td>${opticalLimit.toLocaleString()}</td>
       <td>Per Person</td>
       </tr>
       <tr>
       <td>Dental</td>
-     <td>${dentalCategory.dentalLimit?.toLocaleString()||0}</td>
+     <td>${dentalLimit.toLocaleString()}</td>
       <td>Per Person</td>
       </tr>
       <tr>
       <td>Last expense</td>
-      <td>${lastExpenses.lastExpense?.toLocaleString()||0}</td>
+      <td>${lastExpenses.lastExpense?.toLocaleString() || 0}</td>
       <td>Per Person</td>
       </tr>
       <tr>
       <td>Overall limit</td>
-      <td>${(
-        Number(category.limit.replace(/\D/g, "")) +
-        Number(outCategory.outLimit.replace(/\D/g, "")) +
-        Number(opticalCategory.opticalLimit.replace(/\D/g, "")) +
-        Number(dentalCategory.dentalLimit.replace(/\D/g, "")) +
-        Number(lastExpenses.lastExpense) +
-        (maternityCategory.MaternityCoverLimit|| 0)
-      ).toLocaleString()||0}</td>
+      <td>${
+        (
+          inpatientLimit +
+          outpatientLimit +
+          opticalLimit +
+          dentalLimit +
+          lastExpenses.lastExpense +
+          maternityLimit
+        ).toLocaleString() || 0
+      }</td>
       <td>Annually</td>
       </tr>
         <thead>
@@ -467,48 +510,73 @@ exports.downloadCooperateCertificate = async (req, res) => {
             <tr>
               <td>${label}</td>
               <td>${category.dependencies?.get(label) || 0}</td>
-              <td>${(
-                (category.premiumValues?.get(label) || 0) +
-                (outCategory?.outPremiumValues?.get(label) || 0) +
-                (dentalCategory?.dentalPremiumValues?.get(label) || 0) +
-                (opticalCategory?.opticalPremiumValues?.get(label) || 0)
-              ).toLocaleString()||0}</td>
+               <td>${(
+                 (category.premiumValues?.get(label) || 0) +
+                 (outCategory?.outPremiumValues?.get(label) || 0) +
+                 (dentalCategory?.dentalPremiumValues?.get(label) || 0) +
+                 (opticalCategory?.opticalPremiumValues?.get(label) || 0) +
+                 (maternityCategory.RatePerFamily || 0) +
+                 (((category.premiumValues?.get(label) || 0) +
+                   (outCategory?.outPremiumValues?.get(label) || 0) +
+                   (dentalCategory?.dentalPremiumValues?.get(label) || 0) +
+                   (opticalCategory?.opticalPremiumValues?.get(label) || 0) +
+                   (maternityCategory.RatePerFamily || 0)) *
+                   data.loadings) /
+                   100
+               ).toLocaleString()}</td>
               
               <td>${(
                 (category.totalPremiumValues?.get(label) || 0) +
                 (outCategory?.outTotalPremiumValues?.get(label) || 0) +
                 (dentalCategory?.dentalTotalPremiumValues?.get(label) || 0) +
-                (opticalCategory?.opticalTotalPremiumValues?.get(label) || 0)
-              ).toLocaleString()||0}</td>
+                (opticalCategory?.opticalTotalPremiumValues?.get(label) || 0) +
+                (maternityCategory.RatePerFamily || 0) *
+                  category.dependencies?.get(label) +
+                (((category.totalPremiumValues?.get(label) || 0) +
+                  (outCategory?.outTotalPremiumValues?.get(label) || 0) +
+                  (dentalCategory?.dentalTotalPremiumValues?.get(label) || 0) +
+                  (opticalCategory?.opticalTotalPremiumValues?.get(label) ||
+                    0) +
+                  (maternityCategory.RatePerFamily || 0) *
+                    category.dependencies?.get(label)) *
+                  data.loadings) /
+                  100
+              ).toLocaleString()}</td>
             </tr>
           `
             )
             .join("")}
         </tbody>
-        <thead>
-        <th>Total Premium</th>
-        <th>${data.cooporateCart.overallTotals.totalStaffFamily.toLocaleString()||0}</th>
+         <thead>
+        <th>Basic Premium ${data && data.discount !== 0 ? `With Discount` : ""}</th>
+        <th>${category.totalStaffPerCategory}</th>
         <th></th>
-        <th>${data.totalBasic.toLocaleString()||0}</th>
+        <th>${(basicPremiumValue + (basicPremiumValue * data.loadings) / 100 + (basicPremiumValue * data.discount) / 100).toLocaleString()}</th>
         </thead>
         <tbody>
         <tr>
         <td>Mutuelle de Santé (5% of the Total Premium)</td>
         <td></td>
         <td></td>
-        <td>${data.MutuelDeSante.toLocaleString()||0}</td>
+        <td>${mutuelleDesanteValue.toLocaleString()}</td>
         </tr>
         <tr>
         <td>Administration fees (10,000 rwf per life)</td>
         <td></td>
         <td></td>
-        <td>${data.AdminFee.toLocaleString()||0}</td>
+        <td>${adminFee.toLocaleString()}</td>
         </tr>
         <tr>
-        <td>Total premium</td>
+        <td>Gross Total</td>
         <td></td>
         <td></td>
-        <td>${data.overAllPremiumTotal.toLocaleString()||0}</td>
+        <td>${(
+          basicPremiumValue +
+          (basicPremiumValue * data.loadings) / 100 +
+          (basicPremiumValue * data.discount) / 100 +
+          mutuelleDesanteValue +
+          adminFee
+        ).toLocaleString()}</td>
         </tr>
         </tbody>
       </table>
@@ -521,7 +589,7 @@ exports.downloadCooperateCertificate = async (req, res) => {
       const dentalCategory = data.dentalCorp.dentalCategories[index] || {};
       const opticalCategory = data.optCorp.opticalCategories[index] || {};
       const maternityCategory = data.selectedTriplet[index] || {};
-      const lastExpenses = data.lastExpenseCart[index]||{}
+      const lastExpenses = data.lastExpenseCart[index] || {};
 
       return `
       ${index !== 0 ? '<div class="page-break"></div>' : ""}
@@ -551,10 +619,10 @@ exports.downloadCooperateCertificate = async (req, res) => {
             margin: 12px auto;
             padding: 20px;
           }
-          .header, .footer {
+          .header {
             text-align: center;
             color: #006400; /* Dark Green Titles */
-          }
+          }         
           .content {
             margin-top: 100px;
           }
@@ -598,7 +666,7 @@ exports.downloadCooperateCertificate = async (req, res) => {
             OLD MUTUAL MEDICAL INSURANCE SCHEME CORPORATE PROPOSAL FOR
 STAFF &amp; DEPENDANTS </h3>
 <p>
-OLD MUTUAL Insurance Rwanda was licensed in 2012 under the names of Old Mutual
+OLD MUTUAL Insurance Rwanda was licensed in 2012 under the names of UAP
 and started operations in 2013. OLD MUTUAL INSURANCE RWANDA PLC is a
 wholly owned subsidiary of OLD MUTUAL Holdings Limited, a Pan-African
 Investment Company, which is engaged in financial services ranging from insurance,
@@ -610,7 +678,7 @@ Currently OLD MUTUAL has twelve (12) businesses operating in 6 markets i.e.
 Rwanda, Kenya, Uganda, South Sudan, DRC and Tanzania. OLD MUTUAL Holdings
 ltd is the holding company for the various OLD MUTUAL Subsidiaries and its offices
 are based in South Africa. The subsidiaries which transact insurance business are 6,
-investment 3, property 3 and insurance brokerage in DRC. In June 2015, Old Mutual
+investment 3, property 3 and insurance brokerage in DRC. In June 2015, UAP
 Holdings was acquired by Old Mutual and is now member of the OLD MUTUAL
 Group.
 </p>
@@ -629,9 +697,11 @@ Uganda, OLD MUTUAL South Sudan, OLD MUTUAL Rwanda, OLD MUTUAL
 Century Tanzania and OLD MUTUAL Insurance Kenya are writing medical products
 managed under the same back-office system called EOxygen.
 </p>
-The benefits highlight for all categories include.
+
             </div>
-            <div >
+           <div class="page-break">
+           <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
+            The benefits highlight for all categories include.
             <ul>
               ${data.selectedBenefits
                 .map((benefit) => `<li>${benefit.label}</li>`)
@@ -676,7 +746,7 @@ available, if desired.
           <p>
           Any person between from birth to sixty-four (64) years can join the scheme. Existing
 members remain in the scheme up to the age of seventy (70). Dependents include
-spouse, own children, legally adopted and foster children aged from birth to 21 years.
+spouse, own children, legally adopted and foster children aged from birth to 25 years.
 New-born babies shall be introduced in the policy by way of filling enrollment forms.
           </p>
           </div>
@@ -724,7 +794,12 @@ Issuance of cards for all members will take maximum of 5 days after
 submission of updated members list and enrollment forms.
           </p>
           </div>
-          <div>
+           <div class="page-break">
+           <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
+           <img src="data:${photoMimeType};base64,${photoNewPath}" alt="Company Logo" style="width: 100%; height: 900px; object-fit: cover;" />
+          </div>
+          <div >
+          <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
           <h3>Outlined below is an illustration of how the smart system works.</h3>
           <p>
     need the image to display here
@@ -831,8 +906,10 @@ to join the medical scheme</li>
 <li>The contact persons between the two organizations shall be availed at the
 start of the policy.</li>
           </ol>
-          </div>  
           </div>
+         
+         
+       
           
           <div class="page-break">
            <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
@@ -844,10 +921,10 @@ start of the policy.</li>
 either public or private</li>
 <li> Member is referred to a health facility (either private or public)
 for management.</li>
-<li> For those in our panel of providers, Old Mutual undertakes the case in
+<li> For those in our panel of providers, UAP undertakes the case in
 the usual manner. For those who are in providers we don’t
 partner with, they incur the bill and seek reimbursement from
-Old Mutual Insurance Rwanda Ltd. Reimbursement shall be based on
+UAP Insurance Rwanda Ltd. Reimbursement shall be based on
 prevailing tariffs.</li>
 <li> The Case Management Team shall be actively involved in such
 cases with daily reports provided.</li>
@@ -919,13 +996,21 @@ where a bill is paid out of pocket.</td>
           </tbody>
           </table>
           </div>
-          <div class="footer">
-            <p>Prepared By: ${data.createdBy.name}, ${data.createdBy.role}</p>
-            <p>Approved By: ${data.updatedBy.name}, ${data.updatedBy.role}</p>
+          <div style="margin-top: 100px;">
+          <p>Thank you for considering OLD MUTUAL as your medical insurance provider.
+We will be glad to provide any other additional information required.
+</p>
+<p style="margin-top: 30px;">Yours Sincerely,</p>
+
+            <img src="data:${photoMimeType};base64,${stampPhoto}" alt="Company Logo" style="width: 21%; height: 70%; margin-top:60px; margin-bottom:20px" />
+            <p><span style="color: #006400">Prepared By:</span> ${data.createdBy.role},${""} ${data.createdBy.name} </p>
+            ${
+              data.overAllPremiumTotal > 100000000
+                ? `<p><span style="color: #006400">Approved By:</span> ${data.updatedBy.role || ""}, ${""} ${data.updatedBy.name} </p>`
+                : ""
+            }
           </div>
         </div>
-          
-         
       </body>
     </html>
   `;
@@ -940,5 +1025,3 @@ where a bill is paid out of pocket.</td>
     stream.pipe(res);
   });
 };
-
-

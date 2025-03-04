@@ -12,19 +12,19 @@ const { Quotation } = require("../models/ishema");
 
 exports.createQuotation = async (req, res) => {
   try {
-    const { plan, members, benefits, options, beneficiaryInfo,children,principalAgeGroup,spouseAgeGroup } = req.body;
+    const { plan, totalMembers, benefits, options, beneficiaryInfo,children,principalAgeGroup,spouseAgeGroup } = req.body;
     const user = req.user._id;
     const ValidityPeriod = new Date();
     ValidityPeriod.setMonth(ValidityPeriod.getMonth() + 1);
     const newQuotation = new RetailQuotation({
       plan,
-      members,
       ValidityPeriod:ValidityPeriod,
       beneficiaryInfo,
       benefits,
       options,
       children,principalAgeGroup,spouseAgeGroup,
       user,
+      totalMembers
     });
 
     const savedQuotation = await newQuotation.save();
@@ -58,7 +58,7 @@ exports.updateCooperateStatus = async (req, res) => {
 
 exports.getAllRetails = async (req, res) => {
   try {
-    const savedData = await RetailQuotation.find();
+    const savedData = await RetailQuotation.find({user:req.user});
     res.status(200).json(savedData);
   } catch (error) {
     console.log(error);
@@ -80,6 +80,15 @@ exports.getQuotation = async (req, res) => {
   }
 };
 exports.count = async (req, res) => {
+  try {
+    const count = await RetailQuotation.countDocuments({user:req.user});
+    res.status(200).json(count);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+exports.AllCount = async (req, res) => {
   try {
     const count = await RetailQuotation.countDocuments();
     res.status(200).json(count);
@@ -127,6 +136,7 @@ exports.getPendingQuotationsByMonth = async (req, res) => {
 
     const quotations = await Quotation.find({
       status: "Waiting",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -150,6 +160,7 @@ exports.acceptedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const closed = await Quotation.find({
       status: "Accepted",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -173,6 +184,7 @@ exports.approvedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const approved = await Quotation.find({
       status: "Approved",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -195,6 +207,7 @@ exports.rejectedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const rejected = await Quotation.find({
       status: "Rejected",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -217,6 +230,7 @@ exports.blockedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const blocked = await Quotation.find({
       status: "Block",
+      user:req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })

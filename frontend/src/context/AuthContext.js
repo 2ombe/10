@@ -5,7 +5,7 @@ const initialState = {
     ? JSON.parse(localStorage.getItem("userInfo"))
     : null,
   selectedBenefits: [],
-  generalInclusionBenefits:[],
+  generalInclusionBenefits: [],
   selectedDentalBenefits: [],
   selectedOpticalBenefits: [],
   ishemaCart: {
@@ -99,10 +99,12 @@ const initialState = {
       dentalOverallDependenciesTotal: 0,
     },
   },
-  lastExpenseCart:{
-    lastExpenseCategories:[{
-      lastExpense:0
-    } ]
+  lastExpenseCart: {
+    lastExpenseCategories: [
+      {
+        lastExpense: 0,
+      },
+    ],
   },
   optCorp: {
     opticalCategories: [
@@ -119,18 +121,18 @@ const initialState = {
         selectedCategory: "",
       },
     ],
-    
+
     opticalOverallTotals: {
       opticalOverallTotalPremium: 0,
       opticalOverallDependenciesTotal: 0,
       opticalOverallDependancies: 0,
     },
   },
-  
+
   selectedTriplet: null,
   totalRatePerFamily: 0,
   companyInfo: null,
-  blockerInfo:null,
+  blockerInfo: null,
   extendedCategories: [],
 };
 
@@ -454,7 +456,7 @@ export const AuthProvider = ({ children }) => {
     state.selectedTriplet,
     state.ishemaCart,
     state.extendedCategories,
-    state.generalInclusionBenefits
+    state.generalInclusionBenefits,
   ]);
 
   return (

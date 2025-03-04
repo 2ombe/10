@@ -1,23 +1,23 @@
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../context/AuthContext';
 import { Alert, Button, Card, CardHeader, Col, Container, Form, Modal, Row, Spinner, Table } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
-function Count() {
-  const navigate = useNavigate()
+function AdminCount() {
+    const navigate = useNavigate()
     const { state } = useContext(AuthContext);
     const { userInfo } = state;
     const [count, setCount] = useState(null);
     const [retailCount,setRetailCount]=useState(null)
     const [ishema,setIshema]=useState(null)
     const [smeCount,setSmeCount]=useState(null)
+ 
     const [lowCostCount,setLowCostCount]=useState(null)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-   
-   
+  
     useEffect(() => {
       const fetchCount = async () => {
         try {
@@ -113,7 +113,6 @@ function Count() {
     if (error) {
       return <Alert variant="danger">{error}</Alert>;
     }
- 
 
    return (
      
@@ -158,7 +157,8 @@ function Count() {
        <CardHeader className='mb-3' variant="info">
          We have <strong>{ishema}</strong> ishema quotations
        </CardHeader>
-<Button variant='success' className='mb-3' onClick={()=>navigate('/ishemaList')}>View List</Button>
+<Button
+ variant='success' className='mb-3' onClick={()=>navigate('/ishemaList')}>View List</Button>
        </Card> 
          </Col>
        </Row>
@@ -166,6 +166,6 @@ function Count() {
      </Container>
    );
 
-  };
+}
 
-export default Count
+export default AdminCount
