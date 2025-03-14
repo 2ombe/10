@@ -49,7 +49,7 @@ const InshemaInpatient = () => {
     const totalMembers = 1 + (hasSpouse ? 1 : 0); // Calculate total members
     dispatch({ type: "SET_ISHEMA_TOTAL_PREMIUM", payload: newTotalPremium });
     dispatch({ type: "SET_ISHEMA_TOTAL_MEMBERS", payload: totalMembers }); // Dispatch total members to state
-    localStorage.setItem('totalPerPremium', JSON.stringify(newTotalPremium));
+    localStorage.setItem('ishemaCart', JSON.stringify(newTotalPremium));
     localStorage.setItem('totalMembers', totalMembers); // Save total members to localStorage
     console.log('Total Premiums:', newTotalPremium);
     console.log('Total Members:', totalMembers);

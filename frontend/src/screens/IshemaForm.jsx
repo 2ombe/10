@@ -49,7 +49,7 @@ function IshemaForm() {
   const { ishemaCart,blockerInfo } = state;
   const totalMembers=JSON.parse(localStorage.getItem('totalMembers'))
   const members = totalMembers
-
+console.log(ishemaCart)
 
   const navigate = useNavigate();
   const [quotationData, setQuotationData] = useState({
@@ -136,9 +136,9 @@ function IshemaForm() {
             <Card.Body>
               <Card.Title>Client Info</Card.Title>
               <Card.Text>
-                <strong>Client Names:</strong> {ishemaCart.ishemaInfo.CUSTOMER_NAME}
+                <strong>Client Names:</strong> {ishemaCart.ishemaInfo.CUSTOMER_NAME||""}
                 <br />
-                <strong>Client ID:</strong> {ishemaCart.ishemaInfo.CUSTOMER_ID}
+                <strong>Client ID:</strong> {ishemaCart.ishemaInfo.CUSTOMER_ID||""}
                 <br />
                
               </Card.Text>
