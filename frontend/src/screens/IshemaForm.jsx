@@ -6,25 +6,25 @@ import { useNavigate } from 'react-router-dom';
 
 const defaultValues = {
   'Option 1': {
-    inpatientLimit: 25000,
+    inpatientLimit: 4250000,
     outpatientLimit: 25000,
     totalInpatientPremium: 0,
     totalOutpatientPremium: 0,
   },
   'Option 2': {
-    inpatientLimit: 45000,
+    inpatientLimit: 8500000,
     outpatientLimit: 45000,
     totalInpatientPremium: 0,
     totalOutpatientPremium: 0,
   },
   'Option 3': {
-    inpatientLimit: 60000,
+    inpatientLimit: 25500000,
     outpatientLimit: 60000,
     totalInpatientPremium: 0,
     totalOutpatientPremium: 0,
   },
   'Option 4': {
-    inpatientLimit: 80000,
+    inpatientLimit: 42500000,
     outpatientLimit: 80000,
     totalInpatientPremium: 0,
     totalOutpatientPremium: 0,
@@ -46,13 +46,15 @@ const calculatePremiums = (optionData, members) => {
 
 function IshemaForm() {
   const { state, dispatch } = useContext(AuthContext);
-  const { ishemaCart } = state;
-  const members = (ishemaCart.principalCount || 0) + (ishemaCart.spouseCount || 0);
-console.log(ishemaCart);
+  const { ishemaCart,blockerInfo } = state;
+  const totalMembers=JSON.parse(localStorage.getItem('totalMembers'))
+  const members = totalMembers
+
 
   const navigate = useNavigate();
   const [quotationData, setQuotationData] = useState({
-    benefits:ishemaCart.ishemaBenefitOptions,
+    totalMembers:totalMembers,
+    agentData:blockerInfo,
     beneficiaryInfo:ishemaCart.ishemaInfo,
     plan: 'Ishema Plan',
     options: {
@@ -119,6 +121,7 @@ console.log(ishemaCart);
       const res = await axios.post('/api/ishema', quotationData, {
         headers: { Authorization: `Bearer ${state.userInfo.token}` },
       });
+      dispatch({ type: 'CART_CLEAR' });
       navigate(`/ishema/${res.data._id}`);
     } catch (error) {
       console.error(error);
@@ -144,26 +147,7 @@ console.log(ishemaCart);
           </Card>
         </Row>
 
-        <Row>
-        <Card className="mb-3">
-            <Card.Body>
-              <Card.Title>Benefits</Card.Title>
-              <Card.Text>
-                {ishemaCart.ishemaBenefitOptions
-.length === 0 ? (
-                  <p>No benefits selected.</p>
-                ) : (
-                  <ul>
-                    {ishemaCart.ishemaBenefitOptions
-.map((benefit, index) => (
-                      <li key={index}>{benefit.label}</li>
-                    ))}
-                  </ul>
-                )}
-              </Card.Text>
-            </Card.Body>
-          </Card>
-      </Row>
+       
       <Row className="justify-content-md-center">
         <Col md={12}>
           <Form onSubmit={handleSubmit}>

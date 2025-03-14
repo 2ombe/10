@@ -4,22 +4,25 @@ const User = require("../models/User");
 const { generateToken } = require("../middleware/auth");
 const { validationResult } = require("express-validator");
 
+// Strong password validation function
 const isStrongPassword = (password) => {
   const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   return strongPasswordRegex.test(password);
 };
 
-
+// Update user
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
   const { name, email, password, role } = req.body;
 
   try {
+    // Validate input
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
+    // Check if password is strong
     if (password && !isStrongPassword(password)) {
       return res.status(400).json({
         message:
@@ -27,22 +30,24 @@ exports.updateUser = async (req, res) => {
       });
     }
 
-
+    // Find user by ID
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-
+    // Update user fields
     if (name) user.name = name;
     if (email) user.email = email;
     if (role) user.role = role;
 
+    // Hash new password if provided
     if (password) {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
     }
 
+    // Save updated user
     await user.save();
 
     res.json({ message: "User updated successfully", user });
@@ -52,7 +57,7 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-
+// Get all users
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find({});

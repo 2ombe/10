@@ -138,7 +138,7 @@ const blockersData = [
         dispatch({ type: "SET_BLOCKER_INFO", payload: data });
         console.log("Blocker Info saved:", data);
         toast.success("Data saved successfully!");
-        navigate("/incooporate");
+        navigate("/proposedLimit");
       } catch (error) {
         console.error("Error:", error);
         toast.error("An error occurred while saving data.");

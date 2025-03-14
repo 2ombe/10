@@ -7,9 +7,14 @@ const categorySchema = new mongoose.Schema({
   premiumValues: { type: Map, of: Number, required: true },
   dependencies: { type: Map, of: Number, required: true },
   totalDependencies: { type: Map, of: Number, required: true },
+  selectedCategory: {
+    type: String,
+    required: true,
+    default: "Premium per Family",
+  },
   totalPremiumValues: { type: Map, of: Number, required: true },
   totalPremium: { type: Number, required: true },
-
+  totalStaffPerCategory: { type: Number, required: true },
 });
 
 const outCategorySchema = new mongoose.Schema({
@@ -18,94 +23,105 @@ const outCategorySchema = new mongoose.Schema({
   outMembers: { type: Number, required: true },
   outPremiumValues: { type: Map, of: Number, required: true },
   outDependencies: { type: Map, of: Number, required: true },
+  selectedCategory: {
+    type: String,
+    required: true,
+    default: "Premium per Family",
+  },
   outTotalDependencies: { type: Map, of: Number, required: true },
   outTotalPremiumValues: { type: Map, of: Number, required: true },
   outTotalPremium: { type: Number, required: true },
-
 });
 const opticalCategorySchema = new mongoose.Schema({
   opticalId: { type: String, required: true },
   opticalLimit: { type: String, required: true },
   opticalMembers: { type: Number, required: true },
   opticalPremiumValues: { type: Map, of: Number, required: true },
+  selectedCategory: {
+    type: String,
+    required: true,
+    default: "Premium per Family",
+  },
   opticalDependencies: { type: Map, of: Number, required: true },
   opticalTotalDependencies: { type: Map, of: Number, required: true },
   opticalTotalPremiumValues: { type: Map, of: Number, required: true },
   opticalTotalPremium: { type: Number, required: true },
-  
 });
 const dentalCategorySchema = new mongoose.Schema({
   dentalId: { type: String, required: true },
   dentalLimit: { type: String, required: true },
   dentalMembers: { type: Number, required: true },
   dentalPremiumValues: { type: Map, of: Number, required: true },
+  selectedCategory: {
+    type: String,
+    required: true,
+    default: "Premium per Family",
+  },
   dentalDependencies: { type: Map, of: Number, required: true },
   dentalTotalDependencies: { type: Map, of: Number, required: true },
   dentalTotalPremiumValues: { type: Map, of: Number, required: true },
   dentalTotalPremium: { type: Number, required: true },
-
 });
-const lastExpense= new mongoose.Schema({
+const lastExpense = new mongoose.Schema({
   lastExpense: { type: Number, required: true },
-  
-})
+});
 const maternityTripletSchema = new mongoose.Schema({
   MaternityCoverLimit: { type: Number, required: true },
   RatePerFamily: { type: Number, required: true },
   GroupMinimumPremium: { type: Number, required: true },
-  
 });
 
 const quotationSchema = new mongoose.Schema(
   {
     companyInfo: {
-      CUSTOMER_ID: { type: String, unique: true },
+      CUSTOMER_ID: { type: String },
       salutation: { type: String },
-      institutionName: { type: String, required: true },   
-      tin: { type: String, required: true },
-      countryOfRegistration: { type: String, required: true },
-      dateOfRegistration: { type: Date, required: true },
-      telephoneNumber: { type: String, required: true },
-      email: { type: String, required: true },
+      institutionName: { type: String },
+      tin: { type: String },
+      countryOfRegistration: { type: String },
+      dateOfRegistration: { type: Date },
+      telephoneNumber: { type: String },
+      email: { type: String },
       postOffice: { type: String },
-      town: { type: String, required: true },
-      corporateCategory: { type: String, required: true },
+      town: { type: String },
+      corporateCategory: { type: String },
     },
-    agentData:{
-      category: { type: String, required: true, enum: ["agent", "blocker"] },
+    agentData: {
+      category: { type: String, enum: ["agent", "blocker"] },
       selectedBlocker: { type: String, default: null },
       selectedAgent: { type: String, default: null },
       email: { type: String, default: null },
       phoneNumber: { type: String, default: null },
     },
-    requestedLimit:{
-      requestedInpatientLimit:{type:Number},
-      requestedOutPatientLimit:{type:Number},
-      requestedOpticalLimit:{type:Number},
-      requestedDentalLimit:{type:Number}
+    requestedLimit: {
+      requestedInpatientLimit: { type: Number },
+      requestedOutPatientLimit: { type: Number },
+      requestedDentalLimit: { type: Number },
+      requestedOpticalLimit: { type: Number },
+      maternityLimit: { type: Number },
     },
     selectedBenefits: [
       {
-        value: { type: String, required: true },
-        label: { type: String, required: true },
+        value: { type: String },
+        label: { type: String },
       },
     ],
     selectedOpticalBenefits: [
       {
-        value: { type: String, required: true },
-        label: { type: String, required: true },
+        value: { type: String },
+        label: { type: String },
       },
     ],
     selectedDentalBenefits: [
       {
-        value: { type: String, required: true },
-        label: { type: String, required: true },
+        value: { type: String },
+        label: { type: String },
       },
     ],
     generalInclusionBenefits: [
       {
-        value: { type: String, required: true },
-        label: { type: String, required: true },
+        value: { type: String },
+        label: { type: String },
       },
     ],
     cooporateCart: {
@@ -116,15 +132,16 @@ const quotationSchema = new mongoose.Schema(
         totalStaffFamily: { type: Number, required: true },
       },
     },
-    
+
     extendedCategoriesCart: {
       extendedCategories: [
         {
-          congenitalConditions: { type: String, required: true },
-          inpatientOphthalmology: { type: String, required: true },
-          inpatientDentalCover: { type: String, required: true },
-          inpatientTreatment: { type: String, required: true },
-          chronicPercentage:{type:Number}
+          congenitalConditions: { type: Number },
+          inpatientOphthalmology: { type: Number },
+          inpatientDentalCover: { type: Number },
+          chronicPercentage: { type: Number },
+          initiatedDiscount: { type: Number, default: 0 },
+          validityPeriod: { type: String },
         },
       ],
     },
@@ -149,8 +166,8 @@ const quotationSchema = new mongoose.Schema(
         opticalOverallDependenciesTotal: { type: Number, required: true },
       },
     },
-    lastExpenseCart:[lastExpense],
-    
+    lastExpenseCart: [lastExpense],
+
     selectedTriplet: [maternityTripletSchema],
     totalMaternity: { type: Number, required: true },
     totalBasic: { type: Number, required: true },
@@ -158,7 +175,7 @@ const quotationSchema = new mongoose.Schema(
     AdminFee: { type: Number, required: true },
     ValidityPeriod: { type: Date, required: true },
     discount: { type: Number, default: 0 },
-    loadings:{type:Number,default:0},
+    loadings: { type: Number, default: 0 },
     overAllPremiumTotal: { type: Number, required: true },
     createdBy: { type: mongoose.Types.ObjectId, ref: "User", required: true },
     updatedBy: { type: mongoose.Types.ObjectId, ref: "User", default: null },

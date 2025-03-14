@@ -1,90 +1,116 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { Button, Card, Col, Row, Spinner, Table, ListGroup, Alert} from 'react-bootstrap';
 import { AuthContext } from '../context/AuthContext';
 import LoadingBox from '../component/LoadingBox';
 import {  useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_REQUEST":
+      return { ...state, loading: true };
+    case "FETCH_SUCCESS":
+      return { ...state, cooporate: action.payload, loading: false };
+    case "FETCH_FAIL":
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
 
 function CooporateDetails() {
-const [message, setMessage] = useState('');
+  const [message, setMessage] = useState('');
   const { state } = useContext(AuthContext);
   const [customer, setCustomer] = useState(null);
   const navigate = useNavigate()
   const params = useParams();
   const { id: cooporateId } = params;
+  const [{ loading, error, cooporate }, dispatch] = useReducer(reducer, {
+    loading: true,
+    error: "",
+  });
+  const initiatedDiscount =cooporate?.extendedCategoriesCart?.extendedCategories?.map(
+    (extended) => extended?.initiatedDiscount
+  )||0
+    
+    
   const { userInfo } = state;
-  const [cooporate, setCooporate] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-const [discount,setDiscount]=useState("")
+const [discount,setDiscount]=useState(initiatedDiscount[0])
+console.log(discount);
+
 const [loadings,setLoadings]=useState("")
  
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data } = await axios.get(`/api/cooporate/single/${cooporateId}`, {
-          headers: { Authorization: `Bearer ${userInfo.token}` },
-        });
-        setCooporate(data);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [cooporateId, userInfo]);
-
-
-    const updateStatus = async (status) => {
-    setLoading(true);
+useEffect(() => {
+  const fetchData = async () => {
+    dispatch({ type: "FETCH_REQUEST" });
     try {
-      const { data } = await axios.put(
-        `/api/cooporate/${cooporateId}`,
-        { status, discount,loadings },
-        { headers: { Authorization: `Bearer ${userInfo.token}` } }
-      );
-      setMessage(data.message);
-      setError(null);
-    } catch (error) {
-      setError('Failed to update status');
-      setMessage('');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(()=>{
-    const fetchCompanies = async () => {
-      try {
-          const response = await axios.get(`/api/cooporateDetails/${cooporateId}`);
-          setCustomer(response.data);
-      } catch (error) {
-          console.log(error.response ? error.response.data.message : "An error occurred");
-      }finally {
-          setLoading(false);
-        }
-  };
-  fetchCompanies()
-  })
-
-  const downloadPDF = async () => {
-    try {
-      const response = await axios.get(`/api/cooporate/${cooporateId}/download`, {
+      const { data } = await axios.get(`/api/cooporate/single/${cooporateId}`, {
         headers: { Authorization: `Bearer ${userInfo.token}` },
-        responseType: 'blob'
       });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `${cooporateId} Quotation.pdf`);
-      document.body.appendChild(link);
-      link.click();
+      dispatch({ type: "FETCH_SUCCESS", payload: data });
     } catch (error) {
-      setError('Failed to download PDF');
+      dispatch({
+        type: "FETCH_FAIL",
+       
+      });
     }
   };
+  fetchData();
+}, [cooporateId, userInfo]);
+
+
+  const updateStatus = async (status) => {
+    dispatch({ type: "FETCH_REQUEST" });
+  try {
+    const { data } = await axios.put(
+      `/api/cooporate/${cooporateId}`,
+      { status, discount },
+      { headers: { Authorization: `Bearer ${userInfo.token}` } }
+    );
+    setMessage(data.message);
+    
+  } catch (error) {
+    console.log('Failed to update status');
+    setMessage('');
+  } finally {
+    dispatch({
+      type: "FETCH_FAIL",
+      
+    });
+  }
+};
+
+useEffect(()=>{
+  const fetchCompanies = async () => {
+    try {
+        const response = await axios.get(`/api/cooporateDetails/${cooporateId}`);
+        setCustomer(response.data);
+    } catch (error) {
+        console.log(error.response ? error.response.data.message : "An error occurred");
+    }finally {
+        console.log(error)
+      }
+};
+fetchCompanies()
+})
+
+const downloadPDF = async () => {
+  try {
+    const response = await axios.get(`/api/cooporate/${cooporateId}/download`, {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+      responseType: 'blob'
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${cooporateId} Quotation.pdf`);
+    document.body.appendChild(link);
+    link.click();
+  } catch (error) {
+    console.log('Failed to download PDF');
+  }
+};
 
   const renderSavedOut = () => {
     return cooporate.outCart.outCategories.map(outCategory => (
@@ -262,6 +288,7 @@ const [loadings,setLoadings]=useState("")
       {loading ? (
         <LoadingBox />
       ) : (
+       
       <Row>
         <Col md={8}>
           <Card className="mb-3">
@@ -347,177 +374,196 @@ const [loadings,setLoadings]=useState("")
             </Card.Body>
           </Card>
         </Col>
-        <Col md={4}>
-          <Card.Body>
-            <Card.Title>Quotation Calculator</Card.Title>
-            <ListGroup variant="flush">
-              <ListGroup.Item>
-                <Row>
-                  <Col>Total Inpatient Premium</Col>
-                  <Col>{cooporate.cooporateCart.overallTotals.overallTotalPremium.toLocaleString()} RWF</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>Total OutPatient Premium</Col>
-                  <Col>{cooporate.outCart.outOverallTotals.outOverallTotalPremium.toLocaleString()} RWF</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>Total Dental Premium</Col>
-                  <Col>{cooporate.dentalCorp.dentalOverallTotals.dentalOverallTotalPremium.toLocaleString()} RWF</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>Total Optical</Col>
-                  <Col>{cooporate.optCorp.opticalOverallTotals.opticalOverallTotalPremium.toLocaleString()} RWF</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>Total Maternity</Col>
-                  <Col>{cooporate.totalMaternity.toLocaleString()} RWF</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>Total Basic Premium</Col>
-                  <Col>{cooporate.totalBasic.toLocaleString()} RWF</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>Mutuel De Sante</Col>
-                  <Col>{cooporate.MutuelDeSante.toLocaleString()} RWF</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>Admin Fee</Col>
-                  <Col>{cooporate.AdminFee.toLocaleString()} RWF</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>
-                    <strong>Overall Premium</strong>
-                  </Col>
-                  <Col>
-                    <strong>{cooporate.overAllPremiumTotal.toLocaleString()} RWF</strong>
-                  </Col>
        
-
-                </Row>
-              </ListGroup.Item>
-            </ListGroup>
-          
-           <ListGroup>
-             {cooporate.status==="Accepted"&&(
-              <></>
-    // <Button onClick={()=>navigate(`/mixed/${cooporateId}`)}>
-    // Next procedure
-    //         </Button>
-   )} 
-           </ListGroup>
-          </Card.Body>
-        
-        </Col>
           {loading && <Spinner animation="border" />}
       {error && <Alert variant="danger">{error}</Alert>}
       {message && <Alert variant="success">{message}</Alert>}
 
-{/* approval processes */}
+      
 
       {userInfo&&(userInfo._id!==cooporate.createdBy._id)&&(cooporate.status!==("Rejected"||"Accepted"||"Approved"))&&(
         <>
-        {(userInfo.role===("senior_underwriter")||userInfo.role===("medical_manager")||userInfo.role===("operational_manager"))&&cooporate.overAllPremiumTotal<=100000000&&(
+        
+        {(userInfo.role===("senior_underwriter")||userInfo.role===("medical_manager")||userInfo.role===("operational_manager"))&&(cooporate.overAllPremiumTotal<100000000&&cooporate.overAllPremiumTotal<=300000000)&&(
 
-      <Row style={{marginBottom:"2rem"}}>
-        <Col>
-      <ListGroup.Item>
-              <strong>Discount:</strong> {discount}%
-              <input
-                type="number"
-                value={discount}
-                onChange={(e) => setDiscount(Number(e.target.value))}
-                className="ms-2"
-              />
-            </ListGroup.Item>
-        </Col>
-        <Col>
-      <ListGroup.Item>
-              <strong>loading:</strong> {loadings}%
-              <input
-                type="number"
-                value={loadings}
-                onChange={(e) => setLoadings(Number(e.target.value))}
-                className="ms-2"
-              />
-            </ListGroup.Item>
-        </Col>
-        <Col>
-      <Button variant="success" onClick={() => updateStatus('Approved')}>
-        Approve
-      </Button>
-        </Col>
-      </Row>
+<Row style={{marginBottom:"2rem"}}>
+<Col>
+{initiatedDiscount[0]<5&&(
+
+<ListGroup.Item>
+      <strong>Discount:</strong> {discount}%
+      <input
+        type="number"
+        value={discount}
+        onChange={(e) => setDiscount(Number(e.target.value))}
+        className="ms-2"
+      />
+    </ListGroup.Item>
+)}
+</Col>
+<Col>
+<ListGroup.Item>
+      <strong>loading:</strong> {loadings}%
+      <input
+        type="number"
+        value={loadings}
+        onChange={(e) => setLoadings(Number(e.target.value))}
+        className="ms-2"
+      />
+    </ListGroup.Item>
+</Col>
+<Col>
+<Button variant="success" onClick={() => updateStatus('Approved')}>
+Approve
+</Button>
+</Col>
+</Row>
         )}
-       
+        {(userInfo.role===("senior_underwriter")||userInfo.role===("medical_manager")||userInfo.role===("operational_manager"))&&(cooporate.overAllPremiumTotal>100000000&&cooporate.overAllPremiumTotal<=300000000)&&(
+
+<Row style={{marginBottom:"2rem"}}>
+<Col>
+{initiatedDiscount[0]<5&&(
+
+<ListGroup.Item>
+      <strong>Discount:</strong> {discount}%
+      <input
+        type="number"
+        value={discount}
+        onChange={(e) => setDiscount(Number(e.target.value))}
+        className="ms-2"
+      />
+    </ListGroup.Item>
+)}
+</Col>
+<Col>
+<ListGroup.Item>
+      <strong>loading:</strong> {loadings}%
+      <input
+        type="number"
+        value={loadings}
+        onChange={(e) => setLoadings(Number(e.target.value))}
+        className="ms-2"
+      />
+    </ListGroup.Item>
+</Col>
+<Col>
+<Button variant="success" onClick={() => updateStatus('Approved')}>
+Approve
+</Button>
+</Col>
+</Row>
+        )}
         {(userInfo.role===("senior_underwriter")||userInfo.role===("medical_manager")||userInfo.role===("operational_manager"))&&(cooporate.overAllPremiumTotal>300000000&&cooporate.overAllPremiumTotal<=500000000)&&(
 
-      <Col>
-      <ListGroup.Item>
-              <strong>Discount:</strong> {discount}%
-              <input
-                type="number"
-                value={discount}
-                onChange={(e) => setDiscount(Number(e.target.value))}
-                className="ms-2"
-              />
-            </ListGroup.Item>
-      <Button variant="success" onClick={() => updateStatus('Approved')}>
-        Approve
-      </Button>
-      </Col>
+<Row style={{marginBottom:"2rem"}}>
+<Col>
+{initiatedDiscount[0]<5&&(
+
+<ListGroup.Item>
+      <strong>Discount:</strong> {discount}%
+      <input
+        type="number"
+        value={discount}
+        onChange={(e) => setDiscount(Number(e.target.value))}
+        className="ms-2"
+      />
+    </ListGroup.Item>
+)}
+</Col>
+<Col>
+<ListGroup.Item>
+      <strong>loading:</strong> {loadings}%
+      <input
+        type="number"
+        value={loadings}
+        onChange={(e) => setLoadings(Number(e.target.value))}
+        className="ms-2"
+      />
+    </ListGroup.Item>
+</Col>
+<Col>
+<Button variant="success" onClick={() => updateStatus('Approved')}>
+Approve
+</Button>
+</Col>
+</Row>
         )}
         {(userInfo.role===("medical_manager")||userInfo.role===("operational_manager"))&&(cooporate.overAllPremiumTotal>500000000&&cooporate.overAllPremiumTotal<=800000000)&&(
 
-      <Col>
-      <ListGroup.Item>
-              <strong>Discount:</strong> {discount}%
-              <input
-                type="number"
-                value={discount}
-                onChange={(e) => setDiscount(Number(e.target.value))}
-                className="ms-2"
-              />
-            </ListGroup.Item>
-      <Button variant="success" onClick={() => updateStatus('Approved')}>
-        Approve
-      </Button>
-      </Col>
+<Row style={{marginBottom:"2rem"}}>
+<Col>
+{initiatedDiscount[0]<10&&(
+
+<ListGroup.Item>
+      <strong>Discount:</strong> {discount}%
+      <input
+        type="number"
+        value={discount}
+        onChange={(e) => setDiscount(Number(e.target.value))}
+        className="ms-2"
+      />
+    </ListGroup.Item>
+)}
+</Col>
+<Col>
+<ListGroup.Item>
+      <strong>loading:</strong> {loadings}%
+      <input
+        type="number"
+        value={loadings}
+        onChange={(e) => setLoadings(Number(e.target.value))}
+        className="ms-2"
+      />
+    </ListGroup.Item>
+</Col>
+<Col>
+<Button variant="success" onClick={() => updateStatus('Approved')}>
+Approve
+</Button>
+</Col>
+</Row>
         )}
         {userInfo.role===("operational_manager")&&(cooporate.overAllPremiumTotal>800000000)&&(
 
-      <Col>
-      <ListGroup.Item>
-              <strong>Discount:</strong> {discount}%
-              <input
-                type="number"
-                value={discount}
-                onChange={(e) => setDiscount(Number(e.target.value))}
-                className="ms-2"
-              />
-            </ListGroup.Item>
-      <Button variant="success" onClick={() => updateStatus('Approved')}>
-        Approve
-      </Button>
-      </Col>
+<Row style={{marginBottom:"2rem"}}>
+<Col>
+{initiatedDiscount[0]>10&&(
+
+<ListGroup.Item>
+      <strong>Discount:</strong> {discount}%
+      <input
+        type="number"
+        value={discount}
+        onChange={(e) => setDiscount(Number(e.target.value))}
+        className="ms-2"
+      />
+    </ListGroup.Item>
+)}
+</Col>
+<Col>
+<ListGroup.Item>
+      <strong>loading:</strong> {loadings}%
+      <input
+        type="number"
+        value={loadings}
+        onChange={(e) => setLoadings(Number(e.target.value))}
+        className="ms-2"
+      />
+    </ListGroup.Item>
+</Col>
+<Col>
+<Button variant="success" onClick={() => updateStatus('Approved')}>
+Approve
+</Button>
+</Col>
+</Row>
         )}
+        
 </>
+
       )}
+      
       {userInfo&&(userInfo._id!==cooporate.createdBy._id)&&(cooporate.status!==("Rejected"||"Accepted"||"Block"))&&(
          <>
         {(userInfo.role===("senior_underwriter")||userInfo.role===("medical_manager")||userInfo.role===("operational_manager"))&&cooporate.overAllPremiumTotal<=100000000&&(
@@ -562,6 +608,8 @@ const [loadings,setLoadings]=useState("")
         )}
 </>
       )}
+
+
       <Col>
       <Row>
 
@@ -601,17 +649,43 @@ const [loadings,setLoadings]=useState("")
 </Row>
       )}
                 </Col>
-                {userInfo&&(cooporate.status==="Approved"||cooporate.status==="Accepted")&&(
-        <>
+                {userInfo&&(userInfo._id===cooporate.createdBy._id&&cooporate.overAllPremiumTotal<=100000000)?(
+<Row style={{marginBottom:"2rem"}}>
+  
+<Col>
+        <strong>loading:</strong> {loadings}%
+        <input
+          type="number"
+          value={loadings}
+          onChange={(e) => setLoadings(Number(e.target.value))}
+          className="ms-2"
+        />
+      </Col>
+ 
+  <Col>
+<Button variant="success" onClick={() => updateStatus('Approved')}>
+  Load
+</Button>
+  </Col>
+                  <Col>
+
+
+  
+                  <Button variant="success" onClick={downloadPDF}>Download PDF</Button>
+                </Col> 
+</Row>
+                ):(
+
+                userInfo&&(cooporate.status==="Approved"||cooporate.status==="Accepted")&&(
+     
       <Col>
 
           <Button variant="success" onClick={downloadPDF}>Download PDF</Button>
         </Col>
-      <Col>
-
-        </Col>
-        </>
-      )}
+      
+       
+      )
+                )}
     
       </Row>
       )}

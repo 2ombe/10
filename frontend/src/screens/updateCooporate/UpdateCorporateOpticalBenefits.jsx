@@ -62,7 +62,7 @@ const UpdateCorporateOpticalBenefits = () => {
     localStorage.setItem("selectedOpticalBenefits", JSON.stringify(selectedOpticalBenefits));
     dispatch({ type: "SET_OPTICAL_SELECTED_BENEFITS", payload: selectedOpticalBenefits });
     console.log("Selected Optical Benefits:", selectedOpticalBenefits);
-    navigate(`/updateCooporate/${corpotateId}`);
+    navigate(`/updateExtended/${corpotateId}`);
   };
 
   return (

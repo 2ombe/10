@@ -235,7 +235,7 @@ const SmeDetails = () => {
                   Revise
                 </Button>
     </Col> */}
-    {quotation.status==="Approved"&&(
+    {(
 <>
     <Col>
     <Button variant="success" onClick={() => updateStatus('Accepted')}>
@@ -255,7 +255,7 @@ const SmeDetails = () => {
 </Row>
       )}
                 </Col>
-      {userInfo&&(userInfo._id===quotation.user._id)&&(quotation.status==="Approved")&&(
+      {userInfo&&(userInfo._id===quotation.user._id)&&(
       <Col>
 
           <Button variant="info" onClick={downloadPDF}>Download PDF</Button>

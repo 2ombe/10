@@ -1,6 +1,8 @@
 const fs = require("fs");
 const pdf = require("html-pdf");
 const moment = require("moment");
+const stamp = "./photos/stamp.png";
+const stampPhoto = fs.readFileSync(stamp).toString("base64");
 const photoPath = "./photos/horizontal.jpg";
 const photoBase64 = fs.readFileSync(photoPath).toString("base64");
 const photoMimeType = "image/jpeg";
@@ -11,18 +13,31 @@ const {
 
 exports.createQuotation = async (req, res) => {
   try {
-    const { plan, members, benefits, options, beneficiaryInfo,children,principalAgeGroup,spouseAgeGroup } = req.body;
+    const {
+      plan,
+      members,
+   
+      options,
+      agentData,
+      beneficiaryInfo,
+      children,
+      principalAgeGroup,
+      spouseAgeGroup,
+    } = req.body;
     const user = req.user._id;
     const ValidityPeriod = new Date();
     ValidityPeriod.setMonth(ValidityPeriod.getMonth() + 1);
     const newQuotation = new LowCostQuotation({
       plan,
       members,
+      agentData,
       beneficiaryInfo,
-      benefits,
+ 
       options,
-      children,principalAgeGroup,spouseAgeGroup,
-      ValidityPeriod:ValidityPeriod,
+      children,
+      principalAgeGroup,
+      spouseAgeGroup,
+      ValidityPeriod: ValidityPeriod,
       user,
     });
 
@@ -52,7 +67,15 @@ exports.getQuotation = async (req, res) => {
 
 exports.getAllQuotation = async (req, res) => {
   try {
-    const quotations = await LowCostQuotation.find({user:req.user});
+    const quotations = await LowCostQuotation.find({ user: req.user });
+    res.status(200).json(quotations);
+  } catch (error) {
+    res.status(404).json(error);
+  }
+};
+exports.getAll = async (req, res) => {
+  try {
+    const quotations = await LowCostQuotation.find();
     res.status(200).json(quotations);
   } catch (error) {
     res.status(404).json(error);
@@ -96,7 +119,7 @@ exports.getPendingQuotationsByMonth = async (req, res) => {
 
     const quotations = await LowCostQuotation.find({
       status: "Waiting",
-      user:req.user,
+      user: req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -120,7 +143,7 @@ exports.acceptedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const closed = await LowCostQuotation.find({
       status: "Accepted",
-      user:req.user,
+      user: req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -144,7 +167,7 @@ exports.approvedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const approved = await LowCostQuotation.find({
       status: "Approved",
-      user:req.user,
+      user: req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -167,7 +190,7 @@ exports.rejectedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const rejected = await LowCostQuotation.find({
       status: "Rejected",
-      user:req.user,
+      user: req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -190,7 +213,7 @@ exports.blockedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const blocked = await LowCostQuotation.find({
       status: "Block",
-      user:req.user,
+      user: req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -226,7 +249,16 @@ exports.updateCooperateStatus = async (req, res) => {
 
 exports.count = async (req, res) => {
   try {
-    const count = await LowCostQuotation.countDocuments({user:req.user});
+    const count = await LowCostQuotation.countDocuments({ user: req.user });
+    res.status(200).json(count);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+exports.adminDocs = async (req, res) => {
+  try {
+    const count = await LowCostQuotation.countDocuments();
     res.status(200).json(count);
   } catch (err) {
     console.error(err);
@@ -276,7 +308,14 @@ exports.downloadCertificate = async (req, res) => {
   if (!data) {
     return res.status(404).send("Quotation not found");
   }
-
+  const formattedDate = new Date(data.ValidityPeriod).toLocaleDateString(
+    "en-GB",
+    {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    }
+  );
   const html = `
     <html>
       <head>
@@ -318,10 +357,7 @@ exports.downloadCertificate = async (req, res) => {
   align-items: center; /* Vertically align the items if needed */
 }
 
-.footer p {
-  margin: 0; 
-}
-  .page-break {
+.page-break {
             page-break-before: always;
           }
 
@@ -339,36 +375,14 @@ exports.downloadCertificate = async (req, res) => {
           <h3>Client Information</h3>
             <p>Customer Id: ${data.beneficiaryInfo.CUSTOMER_ID}</p>
             <p>Telephone: ${data.beneficiaryInfo.HOME_TELEPHONE}</p>
+             <p>The proposal is valid until : ${formattedDate}</p>
 
+           
 
-            <h3>Benefits</h3>
-            <ul>
-              ${data.benefits
-                .map((benefit) => `<li>${benefit.label}</li>`)
-                .join("")}
-            </ul>
-
+            <div class="page-break">
+         <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
             <h3>Members</h3>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>Age</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${data.members
-                  .map(
-                    (member) => `
-                  <tr>
-                    <td>${member.type}</td>
-                    <td>${member.age}</td>
-                  </tr>
-                `
-                  )
-                  .join("")}
-              </tbody>
-            </table>
+           
 
             <h3>Options</h3>
             <table class="table">
@@ -413,12 +427,10 @@ exports.downloadCertificate = async (req, res) => {
               </tbody>
             </table>
 
-            <h3>Total Premium: ${data.options[
-              data.plan
-            ].totalPremium.toLocaleString()}</h3>
           </div>
-          <div class="page-break">
-          <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
+          </div>
+          <div >
+         
          <h3>NB: Outpatient, dental and optical claims shall be payable subject to 10% copay by the member.	</h3>
 <h4>All medical claims have a waiting period of 28 days, exception being a case of an accident.	</h4>
 <h4>Pre-exisiting and newly diagnosed chronic conditions have a waiting period of 1 year.	</h4>
@@ -430,9 +442,18 @@ exports.downloadCertificate = async (req, res) => {
 	
 <p>Kindly issue a cheque or transfer instructions payable to Old mutual Insurance Rwanda as per the above quotation.	</p>
           </div>
-          <div class="footer">
-            <p>Created by: ${data.user.name} (${data.user.role})</p>
-            
+          <div class="page-break" style="margin-top: 100px;">
+          <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
+          <p>Thank you for considering OLD MUTUAL as your medical insurance provider.
+We will be glad to provide any other additional information required.
+</p>
+<p style="margin-top: 30px;">Yours Sincerely,</p>
+
+           <img src="data:${photoMimeType};base64,${stampPhoto}" alt="Company Logo" style="width: 24%; height: 70%; margin-top:60px; margin-bottom:20px" />
+            <p><span style="color: #006400">Prepared By:</span> ${
+              data.user.role
+            },${""} ${data.user.name} </p>
+           
           </div>
         </div>
       </body>

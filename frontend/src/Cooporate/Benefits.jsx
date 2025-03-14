@@ -59,15 +59,7 @@ const benefitOptions = [
     value: "17",
     label:
       "Reimbursement shall be done where no providers exist within the geographical scope.",
-  },
-  {
-    value: "18",
-    label: "Free worldwide travel insurance to all insured members.",
-  },
-  {
-    value: "19",
-    label: "Covid-19 covered inpatient per family 1,500,000rwf  and outpatient paid fully limit of outpatient Covid-19 test not covered.",
-  },
+  }
 ];
 const CorpBenefits = () => {
   const { state, dispatch } = useContext(AuthContext);

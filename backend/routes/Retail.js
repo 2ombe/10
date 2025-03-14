@@ -16,5 +16,7 @@ router.get("/blocked", quotationController.blockedQuotations);
 router.get("/search", quotationController.searchCustomerByName);
 router.get("/:id/download", quotationController.downloadCertificate);
 router.put("/:id", quotationController.updateCooperateStatus);
+router.get("/all/admin", quotationController.adminDocs);
+router.get("/zose", quotationController.getAll);
 router.delete("/", quotationController.deleteData);
 module.exports = router;

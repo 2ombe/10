@@ -24,6 +24,8 @@ const OutPatientPremium = () => {
   const saveOutPatientAndNavigate = () => {
     dispatch({ type: "SET_OUT", payload: selectedOption });
     localStorage.setItem('outOption', JSON.stringify(selectedOption));
+    console.log({"saved data":selectedOption});
+    
     navigate('/retailDental');
   };
 

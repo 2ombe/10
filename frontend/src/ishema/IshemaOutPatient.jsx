@@ -5,9 +5,9 @@ import { AuthContext } from '../context/AuthContext';
 import CheckOutIshemaSteps from '../component/CheckOutIshemaSteps';
 
 const outPatientOptions = [
-  { limit: 100000, premium: 39406 },
-  { limit: 80000, premium: 31525 },
-  { limit: 50000, premium: 19703 },
+  { limit: 850000 , premium: 307659  },
+  { limit: 1275000 , premium: 395420 },
+  { limit:1700000, premium: 418649   },
   { limit: 0, premium: 0 }
 ];
 
@@ -25,7 +25,7 @@ const IshemaOutPatient = () => {
     dispatch({ type: "SET_ISHEMA_OUT", payload: selectedOption });
     localStorage.setItem('outIshemaOption', JSON.stringify(selectedOption));
     console.log(selectedOption);
-   navigate('/ishemaBenefits');
+   navigate('/ishema');
   };
 
   return (

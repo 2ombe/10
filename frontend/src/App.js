@@ -10,7 +10,7 @@ import { AuthContext } from "./context/AuthContext";
 import RegisterForm from "./screens/RegisterForm";
 import QuotationResult from "./screens/QuotationResult";
 import RetailForm from "./screens/RetailForm";
-import UpdateRetailInpatient from "./screens/updateRetail/UpdateInpatient.jsx"
+import UpdateRetailInpatient from "./screens/updateRetail/UpdateInpatient.jsx";
 import LowCostForm from "./screens/LowCostForm";
 import Cooporate from "./screens/Cooporate";
 import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap CSS is imported
@@ -66,8 +66,6 @@ import Combined from "./screens/Combined.jsx";
 import CustomerList from "./screens/customer/CustomerList.jsx";
 import AddCustomer from "./screens/customer/AddCustomer.jsx";
 import CustomerDetail from "./screens/customer/CustomerDetail.jsx";
-import Opticals from "./Cooporate/Opticals.jsx";
-import Dentals from "./Cooporate/Dentals.jsx";
 import CooporateCustomerDetails from "./screens/customer/CooporateCustomerDtails.jsx";
 import CooporateCustomer from "./screens/customer/CooporateCustomer.jsx";
 import CorporateDentalBenefits from "./Cooporate/dentalDenefits.jsx";
@@ -138,13 +136,28 @@ import ExtendedCategoriesForm from "./Cooporate/ExtendedCategoriesForm.jsx";
 import AddAgentOrBlocker from "./Cooporate/AddBlockerAndAgent.jsx";
 import LastExpenseForm from "./Cooporate/LastExpenseForm.jsx";
 import GeneralInclusions from "./Cooporate/GeneralInclusions.jsx";
+import UpdateExtendedCategoriesForm from "./screens/updateCooporate/ExtendedCategoriesForm.jsx";
+import UpdateLastExpenseForm from "./screens/updateCooporate/LastExpenseForm.jsx";
+import UpdateGeneralInclusions from "./screens/updateCooporate/GeneralInclusions.jsx";
+import UpdateAddAgentOrBlocker from "./screens/updateCooporate/AddBlockerAndAgent.jsx";
+import AddLimitInfo from "./Cooporate/ProposedLimit.jsx";
+import IshemaAgentOrBlocker from "./ishema/RetailBlockerAndAgent.jsx";
+import RetailAgentOrBlocker from "./retailPremiums/RetailBlockerAndAgent.jsx";
+import LowcostAgentOrBlocker from "./LowCostPremium/RetailBlockerAndAgent.jsx";
+import SmeAgentOrBlocker from "./sme/RetailBlockerAndAgent.jsx";
 import AdminCount from "./screens/AdminCount.jsx";
 import AdminRole from "./screens/AdminRole.jsx";
-import UpdateDentals from "./screens/updateCooporate/UpdateDentals.jsx";
-import UpdateOpticals from "./screens/updateCooporate/UpdateOpticals.jsx";
+import UpdateProfile from "./screens/UpdateProfile.jsx";
+import DentaPerFamily from "./Cooporate/DentaPerFamily.jsx";
+import CooporateOptical from "./Cooporate/CooporateOptical.jsx";
+import AdminCooperateList from "./screens/AdminCooporateList.jsx";
+import AdminRetailList from "./screens/AdminRetailList.jsx";
+import AdminIshemaList from "./screens/AdminIshemaList.jsx";
+import AdminLowcostList from "./screens/AdminLowcostList.jsx";
+import AdminSmeList from "./screens/AdminSMEList.jsx";
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(AuthContext);
-  const {userInfo}=state
+  const { userInfo } = state;
   const signoutHandler = () => {
     ctxDispatch({ type: "USER_SIGNOUT" });
     window.location.href = "/";
@@ -167,21 +180,6 @@ function App() {
               mozBoxShadow: "-13px 11px 5px 0px rgba(0,0,0,0.75)",
             }}
           >
-            <LinkContainer to="/">
-              <Navbar.Brand>
-                {/* <img
-                  width={100}
-                  height={130}
-                  style={{
-                    marginLeft: "2.8rem",
-                    marginTop: "-55px",
-                    marginBottom: "-200px",
-                  }}
-                  src={logo}
-                  alt="logo"
-                />*/}
-              </Navbar.Brand>
-            </LinkContainer>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse
               id="basic-navbar-nav"
@@ -189,121 +187,121 @@ function App() {
             >
               {state.userInfo && (
                 <Nav className="me-auto w-100 justify-content-end">
-                  {userInfo.role!=="admin"&&(
-<>
-                  <NavDropdown title="Closed">
-                    <LinkContainer to="/closedretail">
-                      <Nav.Link>Retail</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/closedCorporate">
-                      <Nav.Link>Corporate</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/closedLowcost">
-                      <Nav.Link>Low Cost</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/closedIshema">
-                      <Nav.Link>Ishema</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/closedSme">
-                      <Nav.Link>SME</Nav.Link>
-                    </LinkContainer>
-                  </NavDropdown>
-                  <NavDropdown title="Approved">
-                    <LinkContainer to="/approvedretail">
-                      <Nav.Link>Retail</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/approvedCorporate">
-                      <Nav.Link>Corporate</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/approvedLowcost">
-                      <Nav.Link>Low Cost</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/approvedIshema">
-                      <Nav.Link>Ishema</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/approvedSme">
-                      <Nav.Link>SME</Nav.Link>
-                    </LinkContainer>
-                  </NavDropdown>
-                  <NavDropdown title="Pendings">
-                    <LinkContainer to="/Pendingretail">
-                      <Nav.Link>Retail</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/PendingCorporate">
-                      <Nav.Link>Corporate</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/PendingLowcost">
-                      <Nav.Link>Low Cost</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/pendingIshema">
-                      <Nav.Link>Ishema</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/pendingSme">
-                      <Nav.Link>SME</Nav.Link>
-                    </LinkContainer>
-                  </NavDropdown>
-                  <NavDropdown title="Rejected">
-                    <LinkContainer to="/rejectedretail">
-                      <Nav.Link>Retail</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/rejectedCorporate">
-                      <Nav.Link>Corporate</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/rejectedLowcost">
-                      <Nav.Link>Low Cost</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/rejectedIshema">
-                      <Nav.Link>Ishema</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/rejectedSme">
-                      <Nav.Link>SME</Nav.Link>
-                    </LinkContainer>
-                  </NavDropdown>
-                  <NavDropdown title="Blocked">
-                    <LinkContainer to="/blockedretail">
-                      <Nav.Link>Retail</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/blockedCorporate">
-                      <Nav.Link>Corporate</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/blockedLowcost">
-                      <Nav.Link>Low Cost</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/blockedIshema">
-                      <Nav.Link>Ishema</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/blockedSme">
-                      <Nav.Link>SME</Nav.Link>
-                    </LinkContainer>
-                  </NavDropdown>
+                  {userInfo.role !== "admin" && (
+                    <>
+                      <NavDropdown title="Closed">
+                        <LinkContainer to="/closedretail">
+                          <Nav.Link>Retail</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/closedCorporate">
+                          <Nav.Link>Corporate</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/closedLowcost">
+                          <Nav.Link>Low Cost</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/closedIshema">
+                          <Nav.Link>Ishema</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/closedSme">
+                          <Nav.Link>SME</Nav.Link>
+                        </LinkContainer>
+                      </NavDropdown>
+                      <NavDropdown title="Approved">
+                        <LinkContainer to="/approvedretail">
+                          <Nav.Link>Retail</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/approvedCorporate">
+                          <Nav.Link>Corporate</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/approvedLowcost">
+                          <Nav.Link>Low Cost</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/approvedIshema">
+                          <Nav.Link>Ishema</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/approvedSme">
+                          <Nav.Link>SME</Nav.Link>
+                        </LinkContainer>
+                      </NavDropdown>
+                      <NavDropdown title="Pendings">
+                        <LinkContainer to="/Pendingretail">
+                          <Nav.Link>Retail</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/PendingCorporate">
+                          <Nav.Link>Corporate</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/PendingLowcost">
+                          <Nav.Link>Low Cost</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/pendingIshema">
+                          <Nav.Link>Ishema</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/pendingSme">
+                          <Nav.Link>SME</Nav.Link>
+                        </LinkContainer>
+                      </NavDropdown>
+                      <NavDropdown title="Rejected">
+                        <LinkContainer to="/rejectedretail">
+                          <Nav.Link>Retail</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/rejectedCorporate">
+                          <Nav.Link>Corporate</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/rejectedLowcost">
+                          <Nav.Link>Low Cost</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/rejectedIshema">
+                          <Nav.Link>Ishema</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/rejectedSme">
+                          <Nav.Link>SME</Nav.Link>
+                        </LinkContainer>
+                      </NavDropdown>
+                      <NavDropdown title="Blocked">
+                        <LinkContainer to="/blockedretail">
+                          <Nav.Link>Retail</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/blockedCorporate">
+                          <Nav.Link>Corporate</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/blockedLowcost">
+                          <Nav.Link>Low Cost</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/blockedIshema">
+                          <Nav.Link>Ishema</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/blockedSme">
+                          <Nav.Link>SME</Nav.Link>
+                        </LinkContainer>
+                      </NavDropdown>
 
-                  <NavDropdown title="New Products">
-                    <LinkContainer to="/retailBeneficiary">
-                      <Nav.Link>Retail</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/company">
-                      <Nav.Link>Corporate</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/lowcostClient">
-                      <Nav.Link>Low Cost</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/ishemaClient">
-                      <Nav.Link>Ishema</Nav.Link>
-                    </LinkContainer>
-                    <LinkContainer to="/smeClient">
-                      <Nav.Link>SME</Nav.Link>
-                    </LinkContainer>
-                  </NavDropdown>
-</>
+                      <NavDropdown title="New Products">
+                        <LinkContainer to="/retailBeneficiary">
+                          <Nav.Link>Retail</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/company">
+                          <Nav.Link>Corporate</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/lowcostClient">
+                          <Nav.Link>Low Cost</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/ishemaClient">
+                          <Nav.Link>Ishema</Nav.Link>
+                        </LinkContainer>
+                        <LinkContainer to="/smeClient">
+                          <Nav.Link>SME</Nav.Link>
+                        </LinkContainer>
+                      </NavDropdown>
+                    </>
                   )}
 
                   <NavDropdown
                     title={state.userInfo.name}
                     id="basic-nav-dropdown"
                   >
-                    {/* <LinkContainer to="/profile">
-                    <Nav.Link>Profile</Nav.Link>
-                  </LinkContainer> */}
+                    <LinkContainer to="/profile">
+                      <Nav.Link>Profile</Nav.Link>
+                    </LinkContainer>
                     <Link
                       className="dropdown-item"
                       to="#signout"
@@ -321,6 +319,7 @@ function App() {
           <Container>
             <Routes>
               <Route exact path="/" element={<LoginForm />} />
+              <Route exact path="/profile" element={<UpdateProfile />} />
               <Route exact path="/retail" element={<RetailForm />} />
               <Route exact path="/retail/:id" element={<RetailDetails />} />
               <Route
@@ -331,15 +330,53 @@ function App() {
               <Route exact path="/retailOption" element={<PremiumTable />} />
               <Route exact path="/retailDental" element={<DentalPremium />} />
               <Route exact path="/retailOptical" element={<OpticalPremium />} />
-              <Route exact path="/retailList" element={<RetailList />} />
+              {userInfo &&
+                (userInfo.role ===
+                ("assistant_underwriter" || "underwriter") ? (
+                  <Route exact path="/retailList" element={<RetailList />} />
+                ) : (
+                  <Route
+                    exact
+                    path="/retailList"
+                    element={<AdminRetailList />}
+                  />
+                ))}
               <Route exact path="/retailOut" element={<OutPatientPremium />} />
-              <Route exact path="/updateretailIn/:id" element={<UpdateRetailInpatient/>} />
-              <Route exact path="/updateOut/:id" element={<UpdateOutPatientRetal/>} />
-              <Route exact path="/updateretailDental/:id" element={<UpdateDentalPremium/>} />
-              <Route exact path="/updateRetailOptical/:id" element={<UpdateOpticalPremium/>} />
-              <Route exact path="/updateRetailMaternity/:id" element={<UpdateMaternityPremium/>} />
-              <Route exact path="/UpdateRetailBenefits/:id" element={<UpdateRetailBenefits/>} />
-              <Route exact path="/UpdateRetail/:id" element={<UpdateRetailForm/>} />
+              <Route
+                exact
+                path="/updateretailIn/:id"
+                element={<UpdateRetailInpatient />}
+              />
+              <Route
+                exact
+                path="/updateOut/:id"
+                element={<UpdateOutPatientRetal />}
+              />
+              <Route
+                exact
+                path="/updateretailDental/:id"
+                element={<UpdateDentalPremium />}
+              />
+              <Route
+                exact
+                path="/updateRetailOptical/:id"
+                element={<UpdateOpticalPremium />}
+              />
+              <Route
+                exact
+                path="/updateRetailMaternity/:id"
+                element={<UpdateMaternityPremium />}
+              />
+              <Route
+                exact
+                path="/UpdateRetailBenefits/:id"
+                element={<UpdateRetailBenefits />}
+              />
+              <Route
+                exact
+                path="/UpdateRetail/:id"
+                element={<UpdateRetailForm />}
+              />
               <Route
                 exact
                 path="/pendingRetail"
@@ -372,15 +409,16 @@ function App() {
               />
               <Route
                 exact
-                path="/retailBeneficiary"
-                element={<RetailBeneficiary />}
+                path="/retailBlocker"
+                element={<RetailAgentOrBlocker />}
               />
               <Route
                 exact
-                path="/brockers"
-                element={<AddAgentOrBlocker />}
+                path="/retailBeneficiary"
+                element={<RetailBeneficiary />}
               />
-              
+              <Route exact path="/brockers" element={<AddAgentOrBlocker />} />
+
               <Route path="/customers" element={<CustomerList />} />
               <Route path="/customers/new/:id" element={<AddCustomer />} />
               <Route
@@ -397,39 +435,48 @@ function App() {
               />
               <Route
                 path="/reviseInfo/:id"
-                element={<UpdateCompanyRegistration/>}
+                element={<UpdateCompanyRegistration />}
               />
               <Route
                 path="/updateIncooporate/:id"
-                element={<UpdateCooporateInpatient/>}
+                element={<UpdateCooporateInpatient />}
               />
               <Route
                 path="/updateOutcooporate/:id"
-                element={<UpdateCooporateOutPatient/>}
+                element={<UpdateCooporateOutPatient />}
               />
               <Route
-                path="/updateDental/:id"
-                element={<UpdateDentals/>}
+                path="/updateExtended/:id"
+                element={<UpdateExtendedCategoriesForm />}
               />
+              <Route
+                path="/lastExpense/:id"
+                element={<UpdateLastExpenseForm />}
+              />
+              <Route path="/updateDental/:id" element={<UpdateDental />} />
               <Route
                 path="/UpdateCooporateOptical/:id"
-                element={<UpdateOpticals/>}
+                element={<UpdateCooporateOptical />}
               />
               <Route
                 path="/UpdateCooporateMaternity/:id"
-                element={<UpdateCooporateMaternity/>}
+                element={<UpdateCooporateMaternity />}
               />
               <Route
                 path="/UpdateCorpOpticalBenefits/:id"
-                element={<UpdateCorporateOpticalBenefits/>}
+                element={<UpdateCorporateOpticalBenefits />}
+              />
+              <Route
+                path="/exclusions/:id"
+                element={<UpdateGeneralInclusions />}
               />
               <Route
                 path="/UpdateCorpDentalBenefits/:id"
-                element={<UpdateCorporateDentalBenefits/>}
+                element={<UpdateCorporateDentalBenefits />}
               />
               <Route
                 path="/UpdateCorpBenefits/:id"
-                element={<UpdateCorpBenefits/>}
+                element={<UpdateCorpBenefits />}
               />
 
               <Route
@@ -444,20 +491,68 @@ function App() {
                 path="/lowcostOptical"
                 element={<LOpticalPremium />}
               />
-              <Route exact path="/lowcostList" element={<LowcostList />} />
+              {userInfo &&
+                (userInfo.role ===
+                ("assistant_underwriter" || "underwriter") ? (
+                  <Route exact path="/lowcostList" element={<LowcostList />} />
+                ) : (
+                  <Route
+                    exact
+                    path="/lowcostList"
+                    element={<AdminLowcostList />}
+                  />
+                ))}
+
               <Route
                 exact
                 path="/lowcostClient"
                 element={<LowcostBeneficiary />}
               />
-              <Route exact path="/lowcostInfo/:id" element={<UpdateLowcostBeneficiary/>} />
-              <Route exact path="/updateLowcostIn/:id" element={<UpdateLPremiumTable/>} />
-              <Route exact path="/updatelowcostOut/:id" element={<UpdateLOutPatientPremium/>} />
-              <Route exact path="/lowcostDental/:id" element={<UpdateLDentalPremium/>} />
-              <Route exact path="/lowcostOptical/:id" element={<UpdateLOpticalPremium/>} />
-              <Route exact path="/lowcostMaternity/:id" element={<UpdateLMaternityPremium/>} />
-              <Route exact path="/lowcostBenefits/:id" element={<UpdateLowcostBenefits/>} />
-              <Route exact path="/updateLowcost/:id" element={<UpdateLowCost/>} />
+              <Route
+                exact
+                path="/lowcostInfo/:id"
+                element={<UpdateLowcostBeneficiary />}
+              />
+              <Route
+                exact
+                path="/updateLowcostIn/:id"
+                element={<UpdateLPremiumTable />}
+              />
+              <Route
+                exact
+                path="/updatelowcostOut/:id"
+                element={<UpdateLOutPatientPremium />}
+              />
+              <Route
+                exact
+                path="/lowcostDental/:id"
+                element={<UpdateLDentalPremium />}
+              />
+              <Route
+                exact
+                path="/lowcostOptical/:id"
+                element={<UpdateLOpticalPremium />}
+              />
+              <Route
+                exact
+                path="/lowcostMaternity/:id"
+                element={<UpdateLMaternityPremium />}
+              />
+              <Route
+                exact
+                path="/lowcostBenefits/:id"
+                element={<UpdateLowcostBenefits />}
+              />
+              <Route
+                exact
+                path="/updateLowcost/:id"
+                element={<UpdateLowCost />}
+              />
+              <Route
+                exact
+                path="/lowcostBlocker"
+                element={<LowcostAgentOrBlocker />}
+              />
 
               <Route
                 exact
@@ -470,7 +565,7 @@ function App() {
                 element={<LOutPatientPremium />}
               />
               <Route exact path="/lowcost/:id" element={<LowCostDetails />} />
-             
+
               <Route
                 exact
                 path="/lowcostMaternity"
@@ -503,20 +598,53 @@ function App() {
               />
 
               <Route exact path="/sme" element={<SME />} />
+              <Route
+                exact
+                path="/smeBlockers"
+                element={<SmeAgentOrBlocker />}
+              />
               <Route exact path="/sme/:id" element={<SmeDetails />} />
               <Route exact path="/smeOption" element={<SPremiumTable />} />
               <Route exact path="/smeClient" element={<SmeBeneficiary />} />
               <Route exact path="/smeDental" element={<SDentalPremium />} />
               <Route exact path="/smeOptical" element={<SOpticalPremium />} />
               <Route exact path="/smeOut" element={<SOutPatientPremium />} />
-              <Route exact path="/smeInfo/:id" element={<UpdateSmeBeneficiary/>} />
-              <Route exact path="/updatesmeIn/:id" element={<UpdateSPremiumTable/>} />
-              <Route exact path="/smeOut/:id" element={<UpdateSOutPatientPremium/>} />
-              <Route exact path="/smeDental/:id" element={<UpdateSDentalPremium/>} />
-              <Route exact path="/smeOptical/:id" element={<UpdateSOpticalPremium/>} />
-              <Route exact path="/smeMaternity/:id" element={<UpdateSMaternityPremium/>} />
-              <Route exact path="/smeBenefits/:id" element={<UpdateSmeBenefits/>} />
-              <Route exact path="/updateSme/:id" element={<UpdateSme/>} />
+              <Route
+                exact
+                path="/smeInfo/:id"
+                element={<UpdateSmeBeneficiary />}
+              />
+              <Route
+                exact
+                path="/updatesmeIn/:id"
+                element={<UpdateSPremiumTable />}
+              />
+              <Route
+                exact
+                path="/smeOut/:id"
+                element={<UpdateSOutPatientPremium />}
+              />
+              <Route
+                exact
+                path="/smeDental/:id"
+                element={<UpdateSDentalPremium />}
+              />
+              <Route
+                exact
+                path="/smeOptical/:id"
+                element={<UpdateSOpticalPremium />}
+              />
+              <Route
+                exact
+                path="/smeMaternity/:id"
+                element={<UpdateSMaternityPremium />}
+              />
+              <Route
+                exact
+                path="/smeBenefits/:id"
+                element={<UpdateSmeBenefits />}
+              />
+              <Route exact path="/updateSme/:id" element={<UpdateSme />} />
               {/* 
               
               
@@ -530,7 +658,14 @@ function App() {
                 element={<SMaternityPremium />}
               />
               <Route exact path="/smeBenefits" element={<SmeBenefits />} />
-              <Route exact path="/smeList" element={<SmeList />} />
+              {userInfo &&
+                (userInfo.role ===
+                ("assistant_underwriter" || "underwriter") ? (
+                  <Route exact path="/smeList" element={<SmeList />} />
+                ) : (
+                  <Route exact path="/smeList" element={<AdminSmeList />} />
+                ))}
+
               <Route
                 exact
                 path="/pendingSme"
@@ -570,12 +705,43 @@ function App() {
                 path="/ishemaBenefits"
                 element={<IshemaBenefits />}
               />
-              <Route exact path="/ishemaInfo/:id" element={<UpdateIshemaBeneficiary/>} />
-              <Route exact path="/ishemaIn/:id" element={<UpdateInshemaInpatient/>} />
-              <Route exact path="/ishemaOut/:id" element={<UpdateIshemaOutPatient/>} />
-              <Route exact path="/ishemaBenefits/:id" element={<UpdateIshemaBenefits/>} />
-              <Route exact path="/updateIshema/:id" element={<UpdateIshemaForm/>} />    
-              <Route exact path="/ishemaList" element={<IshemaList />} />
+              <Route
+                exact
+                path="/ishemaInfo/:id"
+                element={<UpdateIshemaBeneficiary />}
+              />
+              <Route
+                exact
+                path="/ishemaIn/:id"
+                element={<UpdateInshemaInpatient />}
+              />
+              <Route
+                exact
+                path="/ishemaOut/:id"
+                element={<UpdateIshemaOutPatient />}
+              />
+              <Route
+                exact
+                path="/ishemaBenefits/:id"
+                element={<UpdateIshemaBenefits />}
+              />
+              <Route
+                exact
+                path="/updateIshema/:id"
+                element={<UpdateIshemaForm />}
+              />
+              {userInfo &&
+                (userInfo.role ===
+                ("assistant_underwriter" || "underwriter") ? (
+                  <Route exact path="/ishemaList" element={<IshemaList />} />
+                ) : (
+                  <Route
+                    exact
+                    path="/ishemaList"
+                    element={<AdminIshemaList />}
+                  />
+                ))}
+
               <Route exact path="/ishema/:id" element={<IshemaDetails />} />
               <Route
                 exact
@@ -609,12 +775,31 @@ function App() {
               />
 
               <Route exact path="/ishemaIn" element={<InshemaInpatient />} />
+              <Route
+                exact
+                path="/ishemaBlocker"
+                element={<IshemaAgentOrBlocker />}
+              />
               <Route exact path="/ishemaout" element={<IshemaOutPatient />} />
               <Route exact path="/cooporate" element={<Cooporate />} />
               <Route exact path="/mixed/:id" element={<Mixed />} />
 
               <Route exact path="/members/:id" element={<MembersList />} />
-              <Route exact path="/cooporateList" element={<CooperateList />} />
+              {userInfo &&
+                (userInfo.role ===
+                ("assistant_underwriter" || "underwriter") ? (
+                  <Route
+                    exact
+                    path="/cooporateList"
+                    element={<CooperateList />}
+                  />
+                ) : (
+                  <Route
+                    exact
+                    path="/cooporateList"
+                    element={<AdminCooperateList />}
+                  />
+                ))}
               <Route
                 exact
                 path="/incooporate"
@@ -629,18 +814,20 @@ function App() {
               />
               <Route
                 exact
-                path="/exclusions"
-                element={<GeneralInclusions />}
+                path="/updateAgent/:id"
+                element={<UpdateAddAgentOrBlocker />}
               />
-              <Route exact path="/denta" element={<Dentals />} />
-              {userInfo&&(userInfo.role===("assistant_underwriter"||"underwriter")?(
-
-<Route exact path="/welcome" element={<Count />} />
-):(userInfo.role==="admin")?(
-  <Route exact path="/welcome" element={<AdminRole />} />
-):(
-<Route exact path="/welcome" element={<AdminCount/>} />
-))}
+              <Route exact path="/exclusions" element={<GeneralInclusions />} />
+              <Route exact path="/denta" element={<DentaPerFamily />} />
+              {userInfo &&
+                (userInfo.role ===
+                ("assistant_underwriter" || "underwriter") ? (
+                  <Route exact path="/welcome" element={<Count />} />
+                ) : userInfo.role === "admin" ? (
+                  <Route exact path="/welcome" element={<AdminRole />} />
+                ) : (
+                  <Route exact path="/welcome" element={<AdminCount />} />
+                ))}
               <Route exact path="/corpBenefits" element={<CorpBenefits />} />
               <Route
                 exact
@@ -652,6 +839,7 @@ function App() {
                 path="/corpOpticalBenefits"
                 element={<CorporateOpticalBenefits />}
               />
+              <Route exact path="/proposedLimit" element={<AddLimitInfo />} />
               <Route
                 exact
                 path="/extended"
@@ -663,7 +851,11 @@ function App() {
                 path="/outcooporate"
                 element={<CooporateOutPatient />}
               />
-              <Route exact path="/cooporateOptical" element={<Opticals />} />
+              <Route
+                exact
+                path="/cooporateOptical"
+                element={<CooporateOptical />}
+              />
               <Route
                 exact
                 path="/cooporateMaternity"
@@ -674,11 +866,7 @@ function App() {
                 path="/pendingCorporate"
                 element={<CorporatePendingQuotations />}
               />
-              <Route
-                exact
-                path="/lastExpense"
-                element={<LastExpenseForm />}
-              />
+              <Route exact path="/lastExpense" element={<LastExpenseForm />} />
               <Route
                 exact
                 path="/approvedCorporate"

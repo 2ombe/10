@@ -3,13 +3,16 @@ const fs = require("fs");
 const moment = require("moment");
 const pdf = require("html-pdf");
 const photoPath = "./photos/horizontal.jpg";
+const documentPhoto = "./photos/vertical.png";
+const stamp = "./photos/stamp.png";
+const photoNewPath = fs.readFileSync(documentPhoto).toString("base64");
+const stampPhoto = fs.readFileSync(stamp).toString("base64");
 const photoBase64 = fs.readFileSync(photoPath).toString("base64");
 const photoMimeType = "image/jpeg";
 exports.createCooporate = async (req, res) => {
   const {
     companyInfo,
     agentData,
-    requestedLimit,
     selectedBenefits,
     selectedOpticalBenefits,
     selectedDentalBenefits,
@@ -29,6 +32,7 @@ exports.createCooporate = async (req, res) => {
     agentCart,
     lastExpenseCart,
     generalInclusionBenefits,
+    requestedLimit,
   } = req.body;
 
   const ValidityPeriod = new Date();
@@ -58,6 +62,7 @@ exports.createCooporate = async (req, res) => {
     agentCart,
     lastExpenseCart,
     generalInclusionBenefits,
+    requestedLimit,
   });
 
   try {
@@ -70,6 +75,14 @@ exports.createCooporate = async (req, res) => {
 };
 
 exports.getAllCooporate = async (req, res) => {
+  try {
+    const allQuotations = await Cooperate.find({ createdBy: req.user });
+    res.status(200).json(allQuotations);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+exports.getAllCooporateToAll = async (req, res) => {
   try {
     const allQuotations = await Cooperate.find();
     res.status(200).json(allQuotations);
@@ -102,6 +115,7 @@ exports.getPendingQuotations = async (req, res) => {
 
     const filter = {
       status: "Pending",
+      createdBy: req.user,
       ...(Object.keys(dateFilter).length && { createdAt: dateFilter }),
     };
 
@@ -140,7 +154,7 @@ exports.docs = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-exports.AllDocs = async (req, res) => {
+exports.adminDocs = async (req, res) => {
   try {
     const count = await Cooperate.countDocuments();
     res.status(200).json(count);
@@ -162,6 +176,7 @@ exports.getPendingQuotationsByMonth = async (req, res) => {
 
     const quotations = await Cooperate.find({
       status: "Waiting",
+      createdBy: req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -185,6 +200,7 @@ exports.acceptedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const closed = await Cooperate.find({
       status: "Accepted",
+      createdBy: req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -210,6 +226,7 @@ exports.approvedQuotations = async (req, res) => {
 
     const approved = await Cooperate.find({
       status: "Approved",
+      createdBy: req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -232,6 +249,7 @@ exports.rejectedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const rejected = await Cooperate.find({
       status: "Rejected",
+      createdBy: req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -254,6 +272,7 @@ exports.blockedQuotations = async (req, res) => {
     const endDate = moment(startDate).endOf("month").utc().toDate();
     const blocked = await Cooperate.find({
       status: "Block",
+      createdBy: req.user,
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: 1 })
@@ -381,6 +400,9 @@ exports.downloadCooperateCertificate = async (req, res) => {
   const inpatientChronic = data.extendedCategoriesCart.extendedCategories.map(
     (extended) => extended.chronicPercentage
   );
+  const validityPeriod = data.extendedCategoriesCart.extendedCategories.map(
+    (extended) => extended.validityPeriod
+  );
   const formattedDate = new Date(data.ValidityPeriod).toLocaleDateString(
     "en-GB",
     {
@@ -397,7 +419,7 @@ exports.downloadCooperateCertificate = async (req, res) => {
   const proposeInpatientLimit =
     data.requestedLimit.requestedInpatientLimit || 0;
   const proposeOutpatientLimit =
-    data.requestedLimitrequestedOutPatientLimit || 0;
+    data.requestedLimit.requestedOutPatientLimit || 0;
   const proposeDentalLimit = data.requestedLimit.requestedDentalLimit || 0;
   const proposeOpticalLimit = data.requestedLimit.requestedOpticalLimit || 0;
   const proposeMaternityLimit = data.requestedLimit.maternityLimit || 0;
@@ -423,26 +445,7 @@ exports.downloadCooperateCertificate = async (req, res) => {
     const mutuelleDesanteValue = basicPremiumValue * 0.05;
     const adminFee =
       10000 * data.cooporateCart.overallTotals.overallDependenciesTotal;
-    const inpatientLimit =
-      proposeInpatientLimit !== 0
-        ? proposeInpatientLimit
-        : Number(category.limit.replace(/\D/g)) || "";
-    const outpatientLimit =
-      proposeOutpatientLimit !== 0
-        ? proposeOutpatientLimit
-        : Number(outCategory.outLimit?.replace(/\D/g)) || 0;
-    const maternityLimit =
-      proposeMaternityLimit !== 0
-        ? proposeMaternityLimit
-        : Number(maternityCategory.MaternityCoverLimit) || 0;
-    const opticalLimit =
-      proposeOpticalLimit !== 0
-        ? proposeOpticalLimit
-        : Number(opticalCategory.opticalLimit?.replace(/\D/g)) || 0;
-    const dentalLimit =
-      proposeDentalLimit !== 0
-        ? proposeDentalLimit
-        : Number(dentalCategory.dentalLimit?.replace(/\D/g)) || 0;
+
     return `
       <table class="table">
       <thead>
@@ -452,29 +455,47 @@ exports.downloadCooperateCertificate = async (req, res) => {
       </tr>
       </thead>
       <tr>
-      <td>{Inpatient}</td>
-    <td>${inpatientLimit.toLocaleString()}</td>
-      <td>${category.limit}</td>
+      <td>Inpatient</td>
+    <td>${
+      proposeInpatientLimit !== 0
+        ? proposeInpatientLimit?.toLocaleString()
+        : category.limit || ""
+    }</td>
+      <td>${category.selectedCategory}</td>
       </tr>
       <tr>
       <td>Outpatient</td>
-     <td>${outpatientLimit.toLocaleString()}</td>
-      <td>Per family</td>
+     <td>${(proposeOutpatientLimit !== 0
+       ? proposeOutpatientLimit
+       : Number(outCategory.outLimit) || 0
+     )?.toLocaleString()}</td>
+      <td>${outCategory.selectedCategory}</td>
       </tr>
       <tr>
       <td>Maternity</td>
-      <td>${maternityLimit.toLocaleString()}</td>
+       <td>${(proposeMaternityLimit !== 0
+         ? proposeMaternityLimit
+         : maternityCategory.MaternityCoverLimit || 0
+       )?.toLocaleString()}</td>
       <td>Per family</td>
       </tr>
       <tr>
       <td>Optical</td>
-      <td>${opticalLimit.toLocaleString()}</td>
-      <td>Per Person</td>
+      <td>${
+        proposeOpticalLimit !== 0
+          ? proposeOpticalLimit?.toLocaleString()
+          : opticalCategory.opticalLimit || 0
+      }</td>
+      <td>${opticalCategory.selectedCategory}</td>
       </tr>
       <tr>
       <td>Dental</td>
-     <td>${dentalLimit.toLocaleString()}</td>
-      <td>Per Person</td>
+     <td>${
+       proposeDentalLimit !== 0
+         ? proposeDentalLimit?.toLocaleString()
+         : dentalCategory.dentalLimit || 0
+     }</td>
+      <td>${dentalCategory.selectedCategory}</td>
       </tr>
       <tr>
       <td>Last expense</td>
@@ -485,18 +506,27 @@ exports.downloadCooperateCertificate = async (req, res) => {
       <td>Overall limit</td>
       <td>${
         (
-          inpatientLimit +
-          outpatientLimit +
-          opticalLimit +
-          dentalLimit +
-          lastExpenses.lastExpense +
-          maternityLimit
-        ).toLocaleString() || 0
+          (proposeInpatientLimit !== 0
+            ? proposeInpatientLimit
+            : Number(category.limit.replace(/\D/g, ""))) +
+          (proposeOutpatientLimit !== 0
+            ? proposeOutpatientLimit
+            : Number(outCategory.outLimit) || 0) +
+          (proposeOpticalLimit !== 0
+            ? proposeOpticalLimit
+            : Number(opticalCategory.opticalLimit.replace(/\D/g, "")) || 0) +
+          (proposeDentalLimit !== 0
+            ? proposeDentalLimit
+            : Number(dentalCategory.dentalLimit.replace(/\D/g, "")) || 0) +
+          (proposeMaternityLimit !== 0
+            ? proposeMaternityLimit
+            : maternityCategory.MaternityCoverLimit || 0)
+        )?.toLocaleString() || 0
       }</td>
       <td>Annually</td>
       </tr>
         <thead>
-          <tr>
+          <tr style="background:green;">
             <th>Family size</th>
             <th>Number of staff</th>
             <th>Premium</th>
@@ -510,37 +540,39 @@ exports.downloadCooperateCertificate = async (req, res) => {
             <tr>
               <td>${label}</td>
               <td>${category.dependencies?.get(label) || 0}</td>
-               <td>${(
+               <td>${Math.round(
                  (category.premiumValues?.get(label) || 0) +
-                 (outCategory?.outPremiumValues?.get(label) || 0) +
-                 (dentalCategory?.dentalPremiumValues?.get(label) || 0) +
-                 (opticalCategory?.opticalPremiumValues?.get(label) || 0) +
-                 (maternityCategory.RatePerFamily || 0) +
-                 (((category.premiumValues?.get(label) || 0) +
                    (outCategory?.outPremiumValues?.get(label) || 0) +
                    (dentalCategory?.dentalPremiumValues?.get(label) || 0) +
                    (opticalCategory?.opticalPremiumValues?.get(label) || 0) +
-                   (maternityCategory.RatePerFamily || 0)) *
-                   data.loadings) /
-                   100
+                   (maternityCategory.RatePerFamily || 0) +
+                   (((category.premiumValues?.get(label) || 0) +
+                     (outCategory?.outPremiumValues?.get(label) || 0) +
+                     (dentalCategory?.dentalPremiumValues?.get(label) || 0) +
+                     (opticalCategory?.opticalPremiumValues?.get(label) || 0) +
+                     (maternityCategory.RatePerFamily || 0)) *
+                     data.loadings) /
+                     100
                ).toLocaleString()}</td>
               
-              <td>${(
+              <td>${Math.round(
                 (category.totalPremiumValues?.get(label) || 0) +
-                (outCategory?.outTotalPremiumValues?.get(label) || 0) +
-                (dentalCategory?.dentalTotalPremiumValues?.get(label) || 0) +
-                (opticalCategory?.opticalTotalPremiumValues?.get(label) || 0) +
-                (maternityCategory.RatePerFamily || 0) *
-                  category.dependencies?.get(label) +
-                (((category.totalPremiumValues?.get(label) || 0) +
                   (outCategory?.outTotalPremiumValues?.get(label) || 0) +
                   (dentalCategory?.dentalTotalPremiumValues?.get(label) || 0) +
                   (opticalCategory?.opticalTotalPremiumValues?.get(label) ||
                     0) +
                   (maternityCategory.RatePerFamily || 0) *
-                    category.dependencies?.get(label)) *
-                  data.loadings) /
-                  100
+                    category.dependencies?.get(label) +
+                  (((category.totalPremiumValues?.get(label) || 0) +
+                    (outCategory?.outTotalPremiumValues?.get(label) || 0) +
+                    (dentalCategory?.dentalTotalPremiumValues?.get(label) ||
+                      0) +
+                    (opticalCategory?.opticalTotalPremiumValues?.get(label) ||
+                      0) +
+                    (maternityCategory.RatePerFamily || 0) *
+                      category.dependencies?.get(label)) *
+                    data.loadings) /
+                    100
               ).toLocaleString()}</td>
             </tr>
           `
@@ -548,34 +580,40 @@ exports.downloadCooperateCertificate = async (req, res) => {
             .join("")}
         </tbody>
          <thead>
-        <th>Basic Premium ${data && data.discount !== 0 ? `With Discount` : ""}</th>
+        <th>Basic Premium ${
+          data && data.discount !== 0 ? `With Discount` : ""
+        }</th>
         <th>${category.totalStaffPerCategory}</th>
         <th></th>
-        <th>${(basicPremiumValue + (basicPremiumValue * data.loadings) / 100 + (basicPremiumValue * data.discount) / 100).toLocaleString()}</th>
+        <th>${Math.round(
+          basicPremiumValue +
+            (basicPremiumValue * data.loadings) / 100 +
+            (basicPremiumValue * data.discount) / 100
+        ).toLocaleString()}</th>
         </thead>
         <tbody>
         <tr>
         <td>Mutuelle de Santé (5% of the Total Premium)</td>
         <td></td>
         <td></td>
-        <td>${mutuelleDesanteValue.toLocaleString()}</td>
+        <td>${Math.round(mutuelleDesanteValue).toLocaleString()}</td>
         </tr>
         <tr>
         <td>Administration fees (10,000 rwf per life)</td>
         <td></td>
         <td></td>
-        <td>${adminFee.toLocaleString()}</td>
+        <td>${Math.round(adminFee).toLocaleString()}</td>
         </tr>
         <tr>
         <td>Gross Total</td>
         <td></td>
         <td></td>
-        <td>${(
+        <td>${Math.round(
           basicPremiumValue +
-          (basicPremiumValue * data.loadings) / 100 +
-          (basicPremiumValue * data.discount) / 100 +
-          mutuelleDesanteValue +
-          adminFee
+            (basicPremiumValue * data.loadings) / 100 +
+            (basicPremiumValue * data.discount) / 100 +
+            mutuelleDesanteValue +
+            adminFee
         ).toLocaleString()}</td>
         </tr>
         </tbody>
@@ -612,7 +650,8 @@ exports.downloadCooperateCertificate = async (req, res) => {
       <head>
        <style>
           body {
-            font-family: Arial, sans-serif;
+          font-family: 'Montserrat', sans-serif;
+            
           }
           .container {
             width: auto;
@@ -639,7 +678,7 @@ exports.downloadCooperateCertificate = async (req, res) => {
             background-color: #f2f2f2;
           }
           h3 {
-            color: #006400; /* Dark Green Titles */
+            color: #006400; 
           }
           .page-break {
             page-break-before: always;
@@ -657,7 +696,7 @@ exports.downloadCooperateCertificate = async (req, res) => {
           <div class="content">
             <h3>Company Info</h3>
             <p>Company: ${data.companyInfo.institutionName}</p>
-            <p>The proposal is valid until : ${formattedDate}</p>
+            <p>Validity Period: ${validityPeriod}</p>
 
             <h3>Benefits</h3>
             
@@ -750,7 +789,12 @@ spouse, own children, legally adopted and foster children aged from birth to 25 
 New-born babies shall be introduced in the policy by way of filling enrollment forms.
           </p>
           </div>
-          <div>
+          
+          </div>
+          
+          <div class="page-break">
+           <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
+           <div>
           <h3>Waiting periods.</h3>
           <p>
           All waiting periods are waived.
@@ -771,10 +815,6 @@ includes a panel of hospitals and Doctors, and it is continuously being
 developed to meet the needs of our clients. We welcome suggestions from
 our clients on the panel of preferred providers.
           </p>
-          </div>
-          
-          <div class="page-break">
-           <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
            <div>
           <h3>Administration of the scheme</h3>
           <p>
@@ -786,26 +826,20 @@ monthly reports, quarterly and annual statements. The system has capability
 to allow staff to view their account status through the web.
           </p>
           </div>
-          <h3>Membership and roll out of the medical scheme.</h3>
-          <p>
-    Members will be issued with smart cards at no extra cost. However,
-replacements will be charged Rwf 4,000.
-Issuance of cards for all members will take maximum of 5 days after
-submission of updated members list and enrollment forms.
-          </p>
           </div>
            <div class="page-break">
            <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
-           <img src="data:${photoMimeType};base64,${photoNewPath}" alt="Company Logo" style="width: 100%; height: 900px; object-fit: cover;" />
+           <img src="data:${photoMimeType};base64,${photoNewPath}" alt="Company Logo" style="width: 100%; height: 1300px; object-fit: cover; />
           </div>
-          <div >
+         
+          <div class="page-break">
+        
           <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
           <h3>Outlined below is an illustration of how the smart system works.</h3>
           <p>
     need the image to display here
           </p>
-          </div>
-          <div>
+        
           <h3>General Exclusions</h3>
           <p>
     Costs arising from the treatment of the said conditions are not payable under OLD
@@ -846,7 +880,7 @@ newly diagnosed.
           <div>
           <h3>2. Congenital Conditions &amp; pre-term babies</h3>
           <p>
-   We shall allow a sub-limit of ${congenitalConditionsValues} (RWF) (cumulative benefit) per family per
+   We shall allow a sub-limit of ${congenitalConditionsValues.toLocaleString()} (RWF) (cumulative benefit) per family per
 annum to cater for congenital conditions and pre-term babies during hospitalization.
           </p>
           </div>
@@ -861,7 +895,7 @@ separately from the inpatient limit. Antenatal visits are covered on outpatient.
           <div>
           <h3>4. Inpatient Ophthalmology Cover</h3>
           <p>
-  A sub-limit of ${inpatientOphthalmologyValues} (RWF) per family per annum shall be allowed to cater for non-
+  A sub-limit of ${inpatientOphthalmologyValues.toLocaleString()} (RWF) per family per annum shall be allowed to cater for non-
 accidental ophthalmologic in-patient hospitalization. Cost of frames and lenses are
 excluded.
 Accident-related inpatient Ophthalmologic cases are already covered under the
@@ -876,7 +910,7 @@ when treatment other protocols are not suitable.
             <div>
           <h3>5. Inpatient Dental Cover</h3>
           <p>
-A sub-limit of ${inpatientDentalCoverValues} (RWF) per family per annum shall be allowed to cater for non-
+A sub-limit of ${inpatientDentalCoverValues.toLocaleString()} (RWF) per family per annum shall be allowed to cater for non-
 accidental dental in-patient hospitalization. Cost of Braces, crowns, bridges and other
 prosthesis are excluded.
 Accident-related inpatient Dental cases are already covered under the standard
@@ -996,17 +1030,22 @@ where a bill is paid out of pocket.</td>
           </tbody>
           </table>
           </div>
-          <div style="margin-top: 100px;">
+          <div class="page-break" style="margin-top: 100px;">
+          <img src="data:${photoMimeType};base64,${photoBase64}" alt="Company Logo" style="max-width: 100%;" />
           <p>Thank you for considering OLD MUTUAL as your medical insurance provider.
 We will be glad to provide any other additional information required.
 </p>
 <p style="margin-top: 30px;">Yours Sincerely,</p>
 
-            <img src="data:${photoMimeType};base64,${stampPhoto}" alt="Company Logo" style="width: 21%; height: 70%; margin-top:60px; margin-bottom:20px" />
-            <p><span style="color: #006400">Prepared By:</span> ${data.createdBy.role},${""} ${data.createdBy.name} </p>
+            <img src="data:${photoMimeType};base64,${stampPhoto}" alt="Company Logo" style="width: 24%; height: 70%; margin-top:60px; margin-bottom:20px" />
+            <p><span style="color: #006400">Prepared By:</span> ${
+              data.createdBy.role
+            },${""} ${data.createdBy.name} </p>
             ${
               data.overAllPremiumTotal > 100000000
-                ? `<p><span style="color: #006400">Approved By:</span> ${data.updatedBy.role || ""}, ${""} ${data.updatedBy.name} </p>`
+                ? `<p><span style="color: #006400">Approved By:</span> ${
+                    data.updatedBy.role || ""
+                  }, ${""} ${data.updatedBy.name} </p>`
                 : ""
             }
           </div>

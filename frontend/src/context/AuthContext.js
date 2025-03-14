@@ -52,6 +52,7 @@ const initialState = {
         totalPremiumM: 0,
         premiumValues: {},
         totalPremiumValues: {},
+        selectedCategory: "",
       },
     ],
     overallTotals: {
@@ -72,6 +73,7 @@ const initialState = {
         outTotalPremiumM: 0,
         outPremiumValues: {},
         outTotalPremiumValues: {},
+        selectedCategory: "",
       },
     ],
     outOverallTotals: {
@@ -133,6 +135,7 @@ const initialState = {
   totalRatePerFamily: 0,
   companyInfo: null,
   blockerInfo: null,
+  limitInfo: null,
   extendedCategories: [],
 };
 
@@ -372,6 +375,11 @@ const reducer = (state, action) => {
         ...state,
         blockerInfo: action.payload,
       };
+    case "SET_LIMIT_INFO":
+      return {
+        ...state,
+        limitInfo: action.payload,
+      };
     case "CLEAR_LOCAL_STORAGE":
       localStorage.clear();
       return initialState;
@@ -402,6 +410,143 @@ const reducer = (state, action) => {
           ...state.cooporateCart,
           overallTotals: action.payload,
         },
+      };
+    case "CART_CLEAR":
+      return {
+        ...state,
+        selectedBenefits: [],
+        generalInclusionBenefits: [],
+        selectedDentalBenefits: [],
+        selectedOpticalBenefits: [],
+        ishemaCart: {
+          principalAgeGroup: "65-80",
+          spouseAgeGroup: "65-80",
+          totalPremium: [0, 0, 0, 0],
+          ishemaInfo: null,
+          ishemaBenefitOptions: [],
+          principalCount: 1,
+          spouseCount: 1,
+          limit: "",
+          dependencies: {},
+          totalDependencies: 0,
+          totalPremiumValue: 0,
+        },
+        cart: {
+          principalAgeGroup: "19-29",
+          spouseAgeGroup: "19-29",
+          children: [{ ageGroup: "19-29", above18: false }],
+          totalPremium: [0, 0, 0, 0, 0],
+          maternityOption: {},
+          opticalOption: [],
+          dentalOption: [],
+          retailBenefitOptions: [],
+          retailInfo: null,
+          outOption: [],
+          principalCount: 1,
+          spouseCount: 1,
+          childCount: 1,
+          limit: "",
+          dependencies: {},
+          totalDependencies: 0,
+          totalPremiumValue: 0,
+        },
+        cooporateCart: {
+          categories: [
+            {
+              id: 1,
+              limit: "",
+              members: 0,
+              dependencies: {},
+              totalDependencies: {},
+              totalPremium: 0,
+              totalPremiumM: 0,
+              premiumValues: {},
+              totalPremiumValues: {},
+              selectedCategory: "",
+            },
+          ],
+          overallTotals: {
+            overallTotalPremium: 0,
+            overallDependenciesTotal: 0,
+            overallDependancies: 0,
+          },
+        },
+        outCart: {
+          outCategories: [
+            {
+              outId: 1,
+              outLimit: "",
+              outMembers: 0,
+              outDependencies: {},
+              outTotalDependencies: {},
+              outTotalPremium: 0,
+              outTotalPremiumM: 0,
+              outPremiumValues: {},
+              outTotalPremiumValues: {},
+              selectedCategory: "",
+            },
+          ],
+          outOverallTotals: {
+            outOverallTotalPremium: 0,
+            outOverallDependenciesTotal: 0,
+          },
+        },
+        dentalCorp: {
+          dentalCategories: [
+            {
+              dentalId: 1,
+              dentalLimit: "",
+              dentalMembers: 0,
+              dentalDependencies: {},
+              dentalTotalDependencies: {},
+              dentalTotalPremium: 0,
+              dentalTotalPremiumM: 0,
+              dentalPremiumValues: {},
+              dentalTotalPremiumValues: {},
+              selectedCategory: "",
+            },
+          ],
+          dentalOverallTotals: {
+            dentalOverallTotalPremium: 0,
+            dentalOverallDependenciesTotal: 0,
+          },
+        },
+        lastExpenseCart: {
+          lastExpenseCategories: [
+            {
+              lastExpense: 0,
+            },
+          ],
+        },
+        optCorp: {
+          opticalCategories: [
+            {
+              opticalId: 1,
+              opticalLimit: "",
+              opticalMembers: 0,
+              opticalDependencies: {},
+              opticalTotalDependencies: {},
+              opticalTotalPremium: 0,
+              opticalTotalPremiumM: 0,
+              opticalPremiumValues: {},
+              opticalTotalPremiumValues: {},
+              selectedCategory: "",
+            },
+          ],
+
+          opticalOverallTotals: {
+            opticalOverallTotalPremium: 0,
+            opticalOverallDependenciesTotal: 0,
+            opticalOverallDependancies: 0,
+          },
+        },
+
+        selectedTriplet: null,
+        totalRatePerFamily: 0,
+        companyInfo: null,
+        blockerInfo: null,
+        limitInfo: null,
+        extendedCategories: [],
       };
     default:
       return state;

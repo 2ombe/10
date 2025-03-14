@@ -14,6 +14,8 @@ router.get("/approved", quotationController.approvedQuotations);
 router.get("/rejected", quotationController.rejectedQuotations);
 router.get("/blocked", quotationController.blockedQuotations);
 router.get("/search", quotationController.searchCustomerByName);
+router.get("/all/admin", quotationController.adminDocs);
+router.get("/zose", quotationController.getAll);
 router.get("/", quotationController.getAllQuotation);
 router.get("/status/pending", quotationController.getPendingQuotations);
 

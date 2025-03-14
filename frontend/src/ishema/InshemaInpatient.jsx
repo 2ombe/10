@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Container, Table, Form, Button, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -6,8 +6,8 @@ import CheckOutIshemaSteps from '../component/CheckOutIshemaSteps';
 
 const premiumData = {
   "65-80": {
-    principal: [38051, 57076, 76101, 95126],
-    spouse: [31860, 47789, 63719, 79649],
+    principal: [294551, 336763, 507623, 579182],
+    spouse: [294551, 336763, 507623, 579182],
   }
 };
 
@@ -15,7 +15,8 @@ const InshemaInpatient = () => {
   const { state, dispatch } = useContext(AuthContext);
   const { ishemaCart } = state;
   const { principalAgeGroup = "65-80", spouseAgeGroup = "65-80" } = ishemaCart; // Default age groups
-  const optionLimits = [1500000, 2250000, 3000000, 3750000];
+  const [hasSpouse, setHasSpouse] = useState(!!spouseAgeGroup); // Track if spouse is present
+  const optionLimits = [4250000, 8500000, 25500000, 42500000];
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,18 +27,32 @@ const InshemaInpatient = () => {
     dispatch({ type, payload: event.target.value });
   };
 
+  const addSpouse = () => {
+    setHasSpouse(true);
+    dispatch({ type: 'SET_ISHEMA_SPOUSE_AGE_GROUP', payload: "65-80" }); // Default spouse age group
+  };
+
+  const removeSpouse = () => {
+    setHasSpouse(false);
+    dispatch({ type: 'SET_ISHEMA_SPOUSE_AGE_GROUP', payload: "" }); // Clear spouse age group
+  };
+
   const calculateTotalPremium = (optionIndex) => {
     const principalPremium = premiumData[principalAgeGroup]?.principal[optionIndex] || 0;
-    const spousePremium = premiumData[spouseAgeGroup]?.spouse[optionIndex] || 0;
+    const spousePremium = hasSpouse ? (premiumData[spouseAgeGroup]?.spouse[optionIndex] || 0) : 0;
     const totalPremium = principalPremium + spousePremium;
     return totalPremium;
   };
 
   const saveDataAndNavigate = () => {
     const newTotalPremium = optionLimits.map((limit, index) => calculateTotalPremium(index));
+    const totalMembers = 1 + (hasSpouse ? 1 : 0); // Calculate total members
     dispatch({ type: "SET_ISHEMA_TOTAL_PREMIUM", payload: newTotalPremium });
+    dispatch({ type: "SET_ISHEMA_TOTAL_MEMBERS", payload: totalMembers }); // Dispatch total members to state
     localStorage.setItem('totalPerPremium', JSON.stringify(newTotalPremium));
-    console.log(newTotalPremium);
+    localStorage.setItem('totalMembers', totalMembers); // Save total members to localStorage
+    console.log('Total Premiums:', newTotalPremium);
+    console.log('Total Members:', totalMembers);
     localStorage.setItem('authState', JSON.stringify(state));
     navigate('/ishemaOut');
   };
@@ -63,12 +78,19 @@ const InshemaInpatient = () => {
             <h3>Spouse</h3>
             <Form.Group>
               <Form.Label>Spouse Age Group:</Form.Label>
-              <Form.Control as="select" value={spouseAgeGroup} onChange={handleAgeGroupChange("SET_ISHEMA_SPOUSE_AGE_GROUP")}>
+              <Form.Control
+                as="select"
+                value={spouseAgeGroup}
+                onChange={handleAgeGroupChange("SET_ISHEMA_SPOUSE_AGE_GROUP")}
+                disabled={!hasSpouse} // Disable if spouse is not present
+              >
                 {Object.keys(premiumData).map((ageGroup) => (
                   <option key={ageGroup} value={ageGroup}>{ageGroup}</option>
                 ))}
               </Form.Control>
             </Form.Group>
+            {!hasSpouse && <Button onClick={addSpouse}>Add Spouse</Button>}
+            {hasSpouse && <Button variant="danger" onClick={removeSpouse}>Remove Spouse</Button>}
           </Col>
         </Row>
 
@@ -88,12 +110,14 @@ const InshemaInpatient = () => {
                 <td key={index}>{premium.toLocaleString()}</td>
               ))}
             </tr>
-            <tr>
-              <td>Spouse</td>
-              {premiumData[spouseAgeGroup]?.spouse.map((premium, index) => (
-                <td key={index}>{premium.toLocaleString()}</td>
-              ))}
-            </tr>
+            {hasSpouse && (
+              <tr>
+                <td>Spouse</td>
+                {premiumData[spouseAgeGroup]?.spouse.map((premium, index) => (
+                  <td key={index}>{premium.toLocaleString()}</td>
+                ))}
+              </tr>
+            )}
             <tr>
               <td>Total Premium</td>
               {optionLimits.map((_, index) => (

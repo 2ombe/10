@@ -31,7 +31,7 @@ const LPremiumTable = () => {
  const { state, dispatch } = useContext(AuthContext);
    const { cart } = state;
    const { principalAgeGroup, spouseAgeGroup, children, principalCount, spouseCount, childCount } = cart;
-   const optionLimits = [1500000, 2250000, 3000000, 3750000, 100];
+   const optionLimits = [3750000,7500000,15000000, 22500000, 37500000];
    const navigate = useNavigate();
  
    useEffect(() => {

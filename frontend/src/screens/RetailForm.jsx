@@ -8,52 +8,47 @@ import CheckOutRetailSteps from '../component/CheckOutRetailSteps';
 
 const defaultValues = {
   'Bronze': {
-    inpatientLimit: 25000,
-    outpatientLimit: 25000,
+    inpatientLimit: 3750000,
+    outpatientLimit: 1125000,
     DentalLimit: 150000,
     opticalLimit: 150000,
     maternityLimit: 300000,
-    principleAge: 25000,
     totalInpatientPremium: 0,
     totalOutpatientPremium: 0,
   },
   'Silver': {
-    inpatientLimit: 45000,
-    outpatientLimit: 45000,
+    inpatientLimit: 7500000,
+    outpatientLimit: 1125000,
     DentalLimit: 150000,
     opticalLimit: 150000,
     maternityLimit: 300000,
-    principleAge: 45000,
     totalInpatientPremium: 0,
     totalOutpatientPremium: 0,
   },
   'Gold': {
-    inpatientLimit: 60000,
-    outpatientLimit: 60000,
+    inpatientLimit: 15000000,
+    outpatientLimit: 1125000,
     DentalLimit: 150000,
     opticalLimit: 150000,
     maternityLimit: 300000,
-    principleAge: 60000,
     totalInpatientPremium: 0,
     totalOutpatientPremium: 0,
   },
   'Platinum': {
-    inpatientLimit: 80000,
-    outpatientLimit: 80000,
+    inpatientLimit: 22500000,
+    outpatientLimit: 1125000,
     DentalLimit: 150000,
     opticalLimit: 150000,
     maternityLimit: 300000,
-    principleAge: 80000,
     totalInpatientPremium: 0,
     totalOutpatientPremium: 0,
   },
   'Platinum Plus': {
-    inpatientLimit: 100000,
-    outpatientLimit: 100000,
+    inpatientLimit: 37500000,
+    outpatientLimit: 1125000,
     DentalLimit: 150000,
     opticalLimit: 150000,
-    maternityLimit: 300000,
-    principleAge: 100000,
+    maternityLimit: 750000, 
     totalInpatientPremium: 0,
     totalOutpatientPremium: 0,
   },
@@ -67,7 +62,7 @@ const calculatePremiums = (optionData, members) => {
   const maternityPremium = optionData.maternityPremium;
   const totalInpatientLimit = optionData.inpatientLimit;
   const totalOutPatientLimit = optionData.outpatientLimit;
-  const totalPrincipleAge = optionData.principleAge;
+
 
   const basicPremium =
     totalInpatientPremium +
@@ -79,20 +74,20 @@ const calculatePremiums = (optionData, members) => {
   const administrationFees = 18000 * members;
   const totalPremium = basicPremium + mituelleDeSante + administrationFees;
 
-  return { basicPremium, mituelleDeSante, administrationFees, totalPremium, totalInpatientLimit, totalOutPatientLimit, totalPrincipleAge };
+  return { basicPremium, mituelleDeSante, administrationFees, totalPremium, totalInpatientLimit, totalOutPatientLimit };
 };
 
 function RetailForm() {
   const { state, dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { cart } = state;
+  const { cart,blockerInfo } = state;
   const totalMembers=JSON.parse(localStorage.getItem('totalMembers'))
+const realTotal =totalMembers-1
+console.log(realTotal);
 
-
-  const members = cart.principalCount + cart.spouseCount + cart.childCount;
   const [quotationData, setQuotationData] = useState({
-    benefits:cart.retailBenefitOptions,
-    totalMembers:totalMembers,
+    totalMembers:realTotal,
+    agentData:blockerInfo,
     beneficiaryInfo:cart.retailInfo,
     children:cart.children,
     principalAgeGroup:cart.principalAgeGroup,
@@ -102,15 +97,14 @@ function RetailForm() {
       'Bronze': {
         inpatientLimit: defaultValues['Bronze'].inpatientLimit,
         outpatientLimit: defaultValues['Bronze'].outpatientLimit,
-        principleAge: defaultValues['Bronze'].principleAge,
         DentalLimit: defaultValues['Bronze'].DentalLimit,
         opticalLimit: defaultValues['Bronze'].opticalLimit,
         maternityLimit: defaultValues['Bronze'].maternityLimit,
         totalInpatientPremium: cart.totalPremium[0],
-        totalOutpatientPremium: cart.outOption.limit*members,
-        dentalPremium: cart.dentalOption.limit*members,
-        opticalPremium: cart.opticalOption.limit*members,
-        maternityPremium: cart.maternityOption.limit,
+        totalOutpatientPremium: cart.outOption.premium*realTotal,
+        dentalPremium: cart.dentalOption.premium*realTotal,
+        opticalPremium: cart.opticalOption.premium*realTotal,
+        maternityPremium: cart.maternityOption.premium,
         basicPremium: 0,
         mituelleDeSante: 0,
         administrationFees: 0,
@@ -119,15 +113,14 @@ function RetailForm() {
       'Silver': {
         inpatientLimit: defaultValues['Silver'].inpatientLimit,
         outpatientLimit: defaultValues['Silver'].outpatientLimit,
-        principleAge: defaultValues['Silver'].principleAge,
         totalInpatientPremium: cart.totalPremium[1],
         DentalLimit: defaultValues['Silver'].DentalLimit,
         opticalLimit: defaultValues['Silver'].opticalLimit,
         maternityLimit: defaultValues['Silver'].maternityLimit,
-        totalOutpatientPremium: cart.outOption.limit*members,
-        dentalPremium: cart.dentalOption.limit*members,
-        opticalPremium: cart.opticalOption.limit*members,
-        maternityPremium: cart.maternityOption.limit,
+        totalOutpatientPremium: cart.outOption.premium*realTotal,
+        dentalPremium: cart.dentalOption.premium*realTotal,
+        opticalPremium: cart.opticalOption.premium*realTotal,
+        maternityPremium: cart.maternityOption.premium,
         basicPremium: 0,
         mituelleDeSante: 0,
         administrationFees: 0,
@@ -136,15 +129,14 @@ function RetailForm() {
       'Gold': {
         inpatientLimit: defaultValues['Gold'].inpatientLimit,
         outpatientLimit: defaultValues['Gold'].outpatientLimit,
-        principleAge: defaultValues['Gold'].principleAge,
         totalInpatientPremium: cart.totalPremium[2],
-        totalOutpatientPremium: cart.outOption.limit,
         DentalLimit: defaultValues['Gold'].DentalLimit,
         opticalLimit: defaultValues['Gold'].opticalLimit,
         maternityLimit: defaultValues['Gold'].maternityLimit,
-        dentalPremium: cart.dentalOption.limit*members,
-        opticalPremium: cart.opticalOption.limit*members,
-        maternityPremium: cart.maternityOption.limit,
+        totalOutpatientPremium: cart.outOption.premium*realTotal,
+        dentalPremium: cart.dentalOption.premium*realTotal,
+        opticalPremium: cart.opticalOption.premium*realTotal,
+        maternityPremium: cart.maternityOption.premium,
         basicPremium: 0,
         mituelleDeSante: 0,
         administrationFees: 0,
@@ -153,15 +145,14 @@ function RetailForm() {
       'Platinum': {
         inpatientLimit: defaultValues['Platinum'].inpatientLimit,
         outpatientLimit: defaultValues['Platinum'].outpatientLimit,
-        principleAge: defaultValues['Platinum'].principleAge,
         totalInpatientPremium: cart.totalPremium[3],
         DentalLimit: defaultValues['Platinum'].DentalLimit,
         opticalLimit: defaultValues['Platinum'].opticalLimit,
         maternityLimit: defaultValues['Platinum'].maternityLimit,
-        totalOutpatientPremium: cart.outOption.limit*members,
-        dentalPremium: cart.dentalOption.limit*members,
-        opticalPremium: cart.opticalOption.limit*members,
-        maternityPremium: cart.maternityOption.limit,
+        totalOutpatientPremium: cart.outOption.premium*realTotal,
+        dentalPremium: cart.dentalOption.premium*realTotal,
+        opticalPremium: cart.opticalOption.premium*realTotal,
+        maternityPremium: cart.maternityOption.premium,
         basicPremium: 0,
         mituelleDeSante: 0,
         administrationFees: 0,
@@ -170,15 +161,14 @@ function RetailForm() {
       'Platinum Plus': {
         inpatientLimit: defaultValues['Platinum Plus'].inpatientLimit,
         outpatientLimit: defaultValues['Platinum Plus'].outpatientLimit,
-        principleAge: defaultValues['Platinum Plus'].principleAge,
         totalInpatientPremium: cart.totalPremium[4],
         DentalLimit: defaultValues['Platinum Plus'].DentalLimit,
         opticalLimit: defaultValues['Platinum Plus'].opticalLimit,
         maternityLimit: defaultValues['Platinum Plus'].maternityLimit,
-        totalOutpatientPremium: cart.outOption.limit*members,
-        dentalPremium: cart.dentalOption.limit*members,
-        opticalPremium: cart.opticalOption.limit*members,
-        maternityPremium: cart.maternityOption.limit,
+        totalOutpatientPremium: cart.outOption.premium*realTotal,
+        dentalPremium: cart.dentalOption.premium*realTotal,
+        opticalPremium: cart.opticalOption.premium*realTotal,
+        maternityPremium: cart.maternityOption.premium,
         basicPremium: 0,
         mituelleDeSante: 0,
         administrationFees: 0,
@@ -191,7 +181,7 @@ function RetailForm() {
     const updatedOptions = { ...quotationData.options };
 
     Object.keys(defaultValues).forEach((option) => {
-      const updatedPremiums = calculatePremiums(updatedOptions[option], members);
+      const updatedPremiums = calculatePremiums(updatedOptions[option], realTotal);
       updatedOptions[option] = { ...updatedOptions[option], ...updatedPremiums };
     });
 
@@ -201,7 +191,7 @@ function RetailForm() {
     }));
   }, [
     quotationData,
-    members,
+    realTotal,
   ]);
 
   const handleSubmit = async (e) => {
@@ -211,15 +201,14 @@ function RetailForm() {
       const res = await axios.post('/api/retail', quotationData, {
         headers: { Authorization: `Bearer ${state.userInfo.token}` },
       });
+      dispatch({ type: 'CART_CLEAR' });
       navigate(`/retail/${res.data._id}`);
     } catch (error) {
       console.error('Error saving quotation:', error);
     }
   };
 
-  const handleClearStorage = () => {
-    dispatch({ type: "CLEAR_LOCAL_STORAGE" });
-  };
+  
 
   return (
     <div>
@@ -231,13 +220,13 @@ function RetailForm() {
             <Card.Body>
               <Card.Title>Client Info</Card.Title>
               <Card.Text>
-                <strong>Client Names:</strong> {cart.retailInfo.CUSTOMER_NAME
+                <strong>Client Names:</strong> {cart.retailInfo.CUSTOMER_NAME||""
                 }
                 <br />
                 <br />
-                <strong>Client Surname:</strong> {cart.retailInfo.SURNAME}
+                <strong>Client Surname:</strong> {cart.retailInfo.SURNAME||""}
                 <br />
-                <strong>Client Id:</strong> {cart.retailInfo.CUSTOMER_ID
+                <strong>Client Id:</strong> {cart.retailInfo.CUSTOMER_ID||""
                 }
                              
               </Card.Text>
@@ -246,29 +235,8 @@ function RetailForm() {
           </Card>
         </Row>
 
-        <Row>
-        <Card className="mb-3">
-            <Card.Body>
-              <Card.Title>Benefits</Card.Title>
-              <Card.Text>
-                {cart.retailBenefitOptions
-.length === 0 ? (
-                  <p>No benefits selected.</p>
-                ) : (
-                  <ul>
-                    {cart.retailBenefitOptions
-.map((benefit, index) => (
-                      <li key={index}>{benefit.label}</li>
-                    ))}
-                  </ul>
-                )}
-              </Card.Text>
-            </Card.Body>
-          </Card>
-      </Row>
-        <Row className="justify-content-md-center">
-          <Col md={12}>
-            
+        
+           <Row>
             <Form onSubmit={handleSubmit}>
               <Table bordered>
                 <thead>
@@ -406,10 +374,10 @@ function RetailForm() {
                 Save Quotation
               </Button>
             </Form>
-          </Col>
-        </Row>
+            </Row> 
+          
       </Container>
-      <button onClick={handleClearStorage}>Clear Local Storage</button>
+    
     </div>
   );
 }

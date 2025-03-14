@@ -21,7 +21,7 @@ function AdminCount() {
     useEffect(() => {
       const fetchCount = async () => {
         try {
-          const { data } = await axios.get('api/cooporate/all', {
+          const { data } = await axios.get('api/cooporate/all/admin', {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           });
         
@@ -39,7 +39,7 @@ function AdminCount() {
     useEffect(() => {
       const fetchCount = async () => {
         try {
-          const { data } = await axios.get('api/retail/count', {
+          const { data } = await axios.get('api/retail/all/admin', {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           });
         
@@ -56,7 +56,7 @@ function AdminCount() {
     useEffect(() => {
       const fetchCount = async () => {
         try {
-          const { data } = await axios.get('api/sme/count', {
+          const { data } = await axios.get('api/sme/all/admin', {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           });
         
@@ -73,7 +73,7 @@ function AdminCount() {
     useEffect(() => {
       const fetchCount = async () => {
         try {
-          const { data } = await axios.get('api/lowcost/count', {
+          const { data } = await axios.get('api/lowcost/all/admin', {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           });
         
@@ -91,7 +91,7 @@ function AdminCount() {
     useEffect(() => {
       const fetchCount = async () => {
         try {
-          const { data } = await axios.get('api/ishema/count', {
+          const { data } = await axios.get('api/ishema/all/admin', {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           });
         

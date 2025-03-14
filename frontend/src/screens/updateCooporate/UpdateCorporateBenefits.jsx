@@ -3,8 +3,8 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import Select from "react-select";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import CheckOutCooporateSteps from "../../component/CheckOutCooporateSteps";
 import { AuthContext } from "../../context/AuthContext";
+import CheckOutCooporateSteps from "../../component/CheckOutCooporateSteps";
 
 
 const benefitOptions = [
@@ -61,11 +61,7 @@ const benefitOptions = [
     value: "17",
     label:
       "Reimbursement shall be done where no providers exist within the geographical scope.",
-  },
-  {
-    value: "18",
-    label: "Free worldwide travel insurance to all insured members.",
-  },
+  }
 ];
 const UpdateCorpBenefits = () => {
   const { state, dispatch } = useContext(AuthContext);

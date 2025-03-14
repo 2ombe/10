@@ -42,11 +42,11 @@ const IshemaDetails = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `${response.data.beneficiaryInfo.name} Quotation.pdf`);
+      link.setAttribute('download', `Ishema Quotation.pdf`);
       document.body.appendChild(link);
       link.click();
     } catch (error) {
-      setError('Failed to download PDF');
+      console.log(error);
     }
   };
   
@@ -259,7 +259,7 @@ console.log(quotation.createdBy);
 </Row>
       )}
                 </Col>
-      {userInfo&&(userInfo._id===quotation.user._id)&&(quotation.status==="Approved"||quotation.status==="Accepted")&&(
+      {userInfo&&(userInfo._id)&&(
         <>
       <Col>
 
@@ -270,7 +270,7 @@ console.log(quotation.createdBy);
 
   <Button variant="info" onClick={()=>navigate(`/customers/details/${retailId}`)}>Customer details</Button>
 ):(
-  <Button variant="info" onClick={()=>navigate(`/customers/new/${retailId}`)}>Add customer Details</Button>
+  ""
 )}
         </Col>
         </>

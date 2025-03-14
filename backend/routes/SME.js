@@ -13,6 +13,8 @@ router.get("/rejected", quotationController.rejectedQuotations);
 router.get("/blocked", quotationController.blockedQuotations);
 router.get("/search", quotationController.searchSMEByInstitutionName);
 router.get("/", quotationController.allSMEs);
+router.get("/all/admin", quotationController.adminDocs);
+router.get("/zose", quotationController.getAll);
 router.put("/smeQuotation/:id", quotationController.updateSmeQuotation);
 router.put("/:id/update", quotationController.updateCooperateStatus);
 router.get("/:id/download", quotationController.downloadCertificate);

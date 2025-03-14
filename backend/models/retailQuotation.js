@@ -42,6 +42,13 @@ const quotationSchema = new mongoose.Schema({
     NATIONAL_ID_NUMBER: { type: String },
     OCCUPATION: { type: String },
   },
+  agentData:{
+    category: { type: String, enum: ["agent", "blocker"] },
+    selectedBlocker: { type: String, default: null },
+    selectedAgent: { type: String, default: null },
+    email: { type: String, default: null },
+    phoneNumber: { type: String, default: null },
+  },
   plan: { type: String, required: true },
   discount: { type: Number, default: 1 },
   children: [childSchema],
@@ -54,12 +61,12 @@ const quotationSchema = new mongoose.Schema({
     Platinum: optionSchema,
     "Platinum Plus": optionSchema,
   },
-  benefits: [
-    {
-      value: { type: String, required: true },
-      label: { type: String, required: true },
-    },
-  ],
+  // benefits: [
+  //   {
+  //     value: { type: String, required: true },
+  //     label: { type: String, required: true },
+  //   },
+  // ],
   status: {
     type: String,
     enum: [

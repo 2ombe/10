@@ -59,11 +59,7 @@ const ishemaBenefitOptions = [
     value: "17",
     label:
       "Reimbursement shall be done where no providers exist within the geographical scope.",
-  },
-  {
-    value: "18",
-    label: "Free worldwide travel insurance to all insured members.",
-  },
+  }
 ];
 const IshemaBenefits = () => {
   const { state, dispatch } = useContext(AuthContext);

@@ -38,7 +38,6 @@ const SmeBeneficiary = () => {
         CUSTOMER_ID:`OM/RW/Sme-${id}`,
         salutation: "",
         institutionName: "",
-        registrationNumber: "",
         tin: "",
         countryOfRegistration: "",
         dateOfRegistration: "",
@@ -48,7 +47,7 @@ const SmeBeneficiary = () => {
         town: "",
         corporateCategory: "",
       });
-      navigate("/smeOption");
+      navigate("/smeBlockers");
     } catch (error) {
       console.log(error);
     }
@@ -67,7 +66,7 @@ const SmeBeneficiary = () => {
               name="salutation"
               value={formData.salutation}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -77,19 +76,10 @@ const SmeBeneficiary = () => {
               name="institutionName"
               value={formData.institutionName}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Registration Number</Form.Label>
-            <Form.Control
-              type="text"
-              name="registrationNumber"
-              value={formData.registrationNumber}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+          
           <Form.Group className="mb-3">
             <Form.Label>TIN</Form.Label>
             <Form.Control
@@ -97,7 +87,7 @@ const SmeBeneficiary = () => {
               name="tin"
               value={formData.tin}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -107,7 +97,7 @@ const SmeBeneficiary = () => {
               name="countryOfRegistration"
               value={formData.countryOfRegistration}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -117,7 +107,7 @@ const SmeBeneficiary = () => {
               name="dateOfRegistration"
               value={formData.dateOfRegistration}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -127,7 +117,7 @@ const SmeBeneficiary = () => {
               name="telephoneNumber"
               value={formData.telephoneNumber}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -137,7 +127,7 @@ const SmeBeneficiary = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -156,7 +146,7 @@ const SmeBeneficiary = () => {
               name="town"
               value={formData.town}
               onChange={handleChange}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -166,7 +156,7 @@ const SmeBeneficiary = () => {
               name="corporateCategory"
               value={formData.corporateCategory}
               onChange={handleChange}
-              required
+              
             >
               <option value="">--Select corporate category--</option>
               <option value="Micro Enterprises">Micro Enterprises</option>

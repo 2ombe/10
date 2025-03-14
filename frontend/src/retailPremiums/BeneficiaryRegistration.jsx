@@ -54,7 +54,8 @@ const RetailBeneficiary = () => {
         OCCUPATION: "",
       });
 
-      navigate("/retailOption");
+      // Navigate to the next step
+      navigate("/retailBlocker");
     } catch (error) {
       console.error("Error saving form data:", error);
     }
@@ -64,7 +65,7 @@ const RetailBeneficiary = () => {
   return (
     <div className="mt-3">
 <CheckOutRetailSteps step1/>
-    <Container className="small-container">
+<Container className="small-container">
       <h2 className="mt-3">Add Client Info</h2>
       <Form onSubmit={handleSubmit}>
         <Row>

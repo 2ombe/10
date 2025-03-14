@@ -24,7 +24,7 @@ const MaternityPremium = () => {
   const saveMaternityAndNavigate = () => {
     dispatch({ type: "SET_MATERNITY", payload: selectedOption });
     localStorage.setItem('maternityOption', JSON.stringify(selectedOption));
-    navigate('/retailBenefits');
+    navigate('/retail');
   };
 
   return (

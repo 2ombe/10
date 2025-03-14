@@ -6,6 +6,11 @@ import CheckOutCooporateSteps from '../component/CheckOutCooporateSteps';
 
 const options = [
   {
+    MaternityCoverLimit: 0,
+    RatePerFamily: 0,
+    GroupMinimumPremium: 0,
+  },
+  {
     MaternityCoverLimit: 225000,
     RatePerFamily: 21617,
     GroupMinimumPremium: 799847,

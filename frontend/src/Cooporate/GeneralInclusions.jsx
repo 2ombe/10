@@ -6,65 +6,99 @@ import { useNavigate } from 'react-router-dom';
 import CheckOutCooporateSteps from '../component/CheckOutCooporateSteps';
 
 const generalInclusionbenefits = [
-    {
-      value: "1",
-      label:
-        "Infertility.",
-    },
-    {
-      value: "2",
-      label: "Alcohol and Substance Abuse.",
-    },
-    {
-      value: "3",
-      label: "Weight management treatments and drugs.",
-    },
-    {
-      value: "4",
-      label:
-        "Cosmetic/plastic surgery and treatments.",
-    },
-    {
-      value: "5",
-      label:
-        "Nutritional supplements unless prescribed as part of medical treatment of specified conditions.",
-    },
-    {
-      value: "6",
-      label:
-        "Self-referred or self-prescribed treatment.",
-    },
-    {
-      value: "7",
-      label:
-        "Treatment outside the appointed panel of service providers (unless pre- authorized).",
-    },
-    { value: "8", label: "Impotence drugs unless prescribed by a specialist Doctor." },
-    { value: "9", label: "Alternative (acupuncture, chiropractor, homoeopathy etc) and herbal medicine." },
-    { value: "10", label: "Diagnostic equipment (e.g. Glucometers, BP machines etc) and hearing aids. Such equipment’s are covered during hospitalization only." },
-    { value: "11", label: "Experimental treatment." },
-    { value: "12", label: "Maternity claims for children." },
-    { value: "13", label: "External surgical appliances for term use (frames, wheelchairs). Short term use 6 weeks is covered." },
-    { value: "14", label: "Claims incurred outside the benefit scope." },
-    {
-      value: "15",
-      label:
-        "Claims incurred above the limit.",
-    },
-    {
-      value: "16",
-      label: "Benefits not specified in the policy and or the quotation.",
-    },
-    {
-      value: "17",
-      label:
-        "Plano glasses.",
-    },
-    {
-      value: "18",
-      label: "Pandemics and epidemics, natural disasters and unknown illnesses covering a wide geographical area with exception of covid 19 treatment as stated in the benefit highlights.",
-    },
-  ];
+  {
+    value: "1",
+    label: "Alcohol and Substance Abuse.",
+  },
+  {
+    value: "2",
+    label: "Infertility and impotence treatment and related investigations.",
+  },
+  {
+    value: "3",
+    label: "Weight management treatments and drugs.",
+  },
+  {
+    value: "4",
+    label: "Plano glasses.",
+  },
+  {
+    value: "5",
+    label: "Allergy tests other than blood tests.",
+  },
+  {
+    value: "6",
+    label: "Cosmetic Treatments.",
+  },
+  {
+    value: "7",
+    label: "Nutritional supplements unless prescribed as part of medical treatment of specified conditions.",
+  },
+  {
+    value: "8",
+    label: "Self-referred or self-prescribed treatment.",
+  },
+  {
+    value: "9",
+    label: "Treatment outside the appointed panel of service providers (unless pre-authorized or where there is no provider).",
+  },
+  {
+    value: "10",
+    label: "Vitamins unless part of medical treatment.",
+  },
+  {
+    value: "11",
+    label: "Alternative (acupuncture, chiropractor, homoeopathy etc.) and herbal medicine.",
+  },
+  {
+    value: "12",
+    label: "Diagnostic equipment (e.g., Glucometers, BP machines etc.) and hearing aids.",
+  },
+  {
+    value: "13",
+    label: "Experimental treatment.",
+  },
+  {
+    value: "14",
+    label: "Maternity claims for children.",
+  },
+  {
+    value: "15",
+    label: "External surgical appliances except short-term use (maximum 6 weeks). Orthopedic shoes, wheelchairs, and others for long-term use are excluded.",
+  },
+  {
+    value: "16",
+    label: "Expenses incurred for medicines, vitamins, lotions, cosmetics, cold remedies, etc., that are available over the counter.",
+  },
+  {
+    value: "17",
+    label: "Pandemics, epidemics, natural disasters, and unknown illnesses covering a wide geographical area.",
+  },
+  {
+    value: "18",
+    label: "Underground mining.",
+  },
+  {
+    value: "19",
+    label: "Accidents/injuries related to professional sports.",
+  },
+  {
+    value: "20",
+    label: "Crowns, bridges, orthodontics, dentures, and self-prescribed scaling.",
+  },
+  {
+    value: "21",
+    label: "Claims incurred outside the benefit scope.",
+  },
+  {
+    value: "22",
+    label: "Claims incurred above the limit.",
+  },
+  {
+    value: "23",
+    label: "Benefits not specified in the policy and/or the quotation.",
+  },
+];
 function GeneralInclusions() {
     const {  dispatch } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -105,7 +139,7 @@ function GeneralInclusions() {
             <Col>
               <Form>
                 <Form.Group controlId="benefitSelect">
-                  <Form.Label>Select General Ixclusion Benefits</Form.Label>
+                  <Form.Label>Select General exclusion Benefits</Form.Label>
                   <Select
                     isMulti
                     options={generalInclusionbenefits}

@@ -77,7 +77,7 @@ corporateCategory
       localStorage.setItem("companyInfo", JSON.stringify(formData));
       dispatch({ type: "SET_COMPANY_INFO", payload: formData });
       console.log("Company Info saved:", formData);
-      navigate(`/updateIncooporate/${corpotateId}`);
+      navigate(`/updateAgent/${corpotateId}`);
     } catch (error) {
       console.log("Error saving company info:", error);
     }
@@ -100,16 +100,7 @@ corporateCategory
               required
             />
           </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Registration Number</Form.Label>
-            <Form.Control
-              type="text"
-              name="registrationNumber"
-              value={registrationNumber}
-              onChange={(e)=>setRegistrationNumber(e.target.value)}
-              required
-            />
-          </Form.Group>
+         
           <Form.Group className="mb-3">
             <Form.Label>TIN</Form.Label>
             <Form.Control

@@ -20,59 +20,66 @@ const reducer = (state, action) => {
 };
 
 const UpdateCooperateForm = () => {
-  const { state, dispatch: ctxDispatch } = useContext(AuthContext);
-       const params = useParams();
-           const { id: corpotateId } = params;
-  const [{ loading }, dispatch] = useReducer(reducer, {
-   loading: false,
- });
- const navigate=useNavigate()
- const { cooporateCart, outCart, dentalCorp, optCorp,totalRatePerFamily, selectedTriplet, userInfo, companyInfo, selectedBenefits,selectedOpticalBenefits,selectedDentalBenefits } = state;
- const [categories, setCategories] = useState(state.cooporateCart.categories || []);
- const [outCategories,setoutCategories]=useState(state.outCart.outCategories||[])
- const [dentalCategories,setDentalCategories]=useState(state.dentalCorp.dentalCategories||[])
- const [opticalCategories,setOpticalCategories]=useState(state.optCorp.opticalCategories||[])
-
- useEffect(() => {
-   const savedData = JSON.parse(localStorage.getItem('cooporateCart'));
-   if (savedData) {
-     setCategories(savedData.categories);
-   }
- }, []);
-
- useEffect(()=>{
-   const saveOut=JSON.parse(localStorage.getItem('outCart'))
-   if(saveOut){
-     setoutCategories(saveOut.outCategories)
-   }
- },[])
-
- useEffect(()=>{
-   const savedDental=JSON.parse(localStorage.getItem('dentalCorp'))
-   if(savedDental){
-     setDentalCategories(savedDental.dentalCategories)
-   }
- },[])
- useEffect(()=>{
-   const savedOptical=JSON.parse(localStorage.getItem('optCorp'))
-   if(savedOptical){
-     setOpticalCategories(savedOptical.opticalCategories)
-   }
- },[])
+  const params = useParams();
+    const { id: corpotateId } = params;
+   const { state, dispatch: ctxDispatch } = useContext(AuthContext);
+    const [{ loading }, dispatch] = useReducer(reducer, {
+     loading: false,
+   });
+   const navigate=useNavigate()
+   const { cooporateCart, outCart, dentalCorp, optCorp,totalRatePerFamily, selectedTriplet, userInfo, companyInfo, selectedBenefits,selectedOpticalBenefits,selectedDentalBenefits,blockerInfo,lastExpenseCart,generalInclusionBenefits} = state;
+   const [categories, setCategories] = useState(state.cooporateCart.categories || []);
  
-
- const totalMaternity = totalRatePerFamily*cooporateCart.overallTotals.totalStaffFamily
-
- const totalBasic =
-   cooporateCart.overallTotals.overallTotalPremium +
-   outCart.outOverallTotals.outOverallTotalPremium +
-   dentalCorp.dentalOverallTotals.dentalOverallTotalPremium
-   +
-   optCorp.opticalOverallTotals.opticalOverallTotalPremium +
-   totalMaternity;
- const MutuelDeSante = totalBasic * 0.05;
- const AdminFee = 10000 * cooporateCart.overallTotals.overallDependenciesTotal;
- const overAllPremiumTotal = totalBasic + MutuelDeSante + AdminFee;
+   const [outCategories,setoutCategories]=useState(state.outCart.outCategories||[])
+   const [dentalCategories,setDentalCategories]=useState(state.dentalCorp.dentalCategories||[])
+   const [opticalCategories,setOpticalCategories]=useState(state.optCorp.opticalCategories||[])
+   const [extendedCategories,setExtendedCategories]=useState(state.extendedCategories||[])
+ 
+   useEffect(() => {
+     const savedData = JSON.parse(localStorage.getItem('cooporateCart'));
+     if (savedData) {
+       setCategories(savedData.categories);
+     }
+   }, []);
+ useEffect(()=>{
+   const savedExtended = JSON.parse(localStorage.getItem("extendedCategories"))
+   if(savedExtended){
+     setExtendedCategories(savedExtended)
+   }
+ },[])
+   useEffect(()=>{
+     const saveOut=JSON.parse(localStorage.getItem('outCart'))
+     if(saveOut){
+       setoutCategories(saveOut.outCategories)
+     }
+   },[])
+ 
+   useEffect(()=>{
+     const savedDental=JSON.parse(localStorage.getItem('dentalCorp'))
+     if(savedDental){
+       setDentalCategories(savedDental.dentalCategories)
+     }
+   },[])
+   useEffect(()=>{
+     const savedOptical=JSON.parse(localStorage.getItem('optCorp'))
+     if(savedOptical){
+       setOpticalCategories(savedOptical.opticalCategories)
+     }
+   },[])
+   
+ 
+   const totalMaternity = totalRatePerFamily*cooporateCart.overallTotals.totalStaffFamily
+ 
+   const totalBasic =
+     cooporateCart.overallTotals.overallTotalPremium +
+     outCart.outOverallTotals.outOverallTotalPremium +
+     dentalCorp.dentalOverallTotals.dentalOverallTotalPremium
+     +
+     optCorp.opticalOverallTotals.opticalOverallTotalPremium +
+     totalMaternity;
+   const MutuelDeSante = totalBasic * 0.05;
+   const AdminFee = 10000 * cooporateCart.overallTotals.overallDependenciesTotal;
+   const overAllPremiumTotal = totalBasic + MutuelDeSante + AdminFee;
 
 const saveQuotationHandler = async () => {
  try {

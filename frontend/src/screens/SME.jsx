@@ -85,10 +85,11 @@ const calculatePremiums = (optionData, members) => {
 function SME() {
   const { state, dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { cart } = state;
+  const { cart ,blockerInfo} = state;
   const members = cart.principalCount + cart.spouseCount + cart.childCount;
   const [quotationData, setQuotationData] = useState({
     benefits:cart.retailBenefitOptions,
+    agentData:blockerInfo,
     beneficiaryInfo:cart.retailInfo,
     plan: 'SME Plan',
     options: {
@@ -204,15 +205,14 @@ function SME() {
       const res = await axios.post('/api/sme', quotationData, {
         headers: { Authorization: `Bearer ${state.userInfo.token}` },
       });
+      dispatch({ type: 'CART_CLEAR' });
       navigate(`/sme/${res.data._id}`);
     } catch (error) {
       console.error('Error saving quotation:', error);
     }
   };
 
-  const handleClearStorage = () => {
-    dispatch({ type: "CLEAR_LOCAL_STORAGE" });
-  };
+  
 
   return (
     <div>
@@ -397,7 +397,7 @@ function SME() {
           </Col>
         </Row>
       </Container>
-      <button onClick={handleClearStorage}>Clear Local Storage</button>
+  
     </div>
   );
 }

@@ -20,19 +20,19 @@ const optionSchema = new mongoose.Schema({
 const quotationSchema = new mongoose.Schema({
   beneficiaryInfo: {
     CUSTOMER_ID: { type: String, unique: true },
-    salutation: { type: String, required: true },
-    institutionName: { type: String, required: true },
-    registrationNumber: { type: String, required: true, unique: true },
-    tin: { type: String, required: true },
-    countryOfRegistration: { type: String, required: true },
-    dateOfRegistration: { type: Date, required: true },
-    telephoneNumber: { type: String, required: true },
-    email: { type: String, required: true },
+    salutation: { type: String },
+    institutionName: { type: String },
+
+    tin: { type: String },
+    countryOfRegistration: { type: String },
+    dateOfRegistration: { type: Date },
+    telephoneNumber: { type: String },
+    email: { type: String },
     postOffice: { type: String },
-    town: { type: String, required: true },
-    corporateCategory: { type: String, required: true },
+    town: { type: String },
+    corporateCategory: { type: String },
   },
-  plan: { type: String, required: true },
+  plan: { type: String },
   members: [memberSchema],
   discount: { type: Number, default: 1 },
   options: {
@@ -48,7 +48,7 @@ const quotationSchema = new mongoose.Schema({
       label: { type: String, required: true },
     },
   ],
-  ValidityPeriod:{type:Date,required:true},
+  ValidityPeriod: { type: Date, required: true },
   status: {
     type: String,
     enum: [
@@ -61,6 +61,13 @@ const quotationSchema = new mongoose.Schema({
       "Approved",
     ],
     default: "Waiting",
+  },
+  agentData: {
+    category: { type: String, enum: ["agent", "blocker"] },
+    selectedBlocker: { type: String, default: null },
+    selectedAgent: { type: String, default: null },
+    email: { type: String, default: null },
+    phoneNumber: { type: String, default: null },
   },
   createdAt: { type: Date, default: Date.now },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },

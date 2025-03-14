@@ -35,7 +35,7 @@ const UpdateRetailInpatient = () => {
   const params = useParams()
   const {id:retailId}=params
   const { principalAgeGroup, spouseAgeGroup, children, childCount } = cart;
-  const optionLimits = [1500000, 2250000, 3000000, 3750000, 100];
+  const optionLimits = [375000,1500000, 2250000, 3000000, 3750000];
   const navigate = useNavigate();
 
   useEffect(() => {

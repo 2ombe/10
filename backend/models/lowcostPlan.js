@@ -32,10 +32,7 @@ const quotationSchema = new mongoose.Schema({
     FORENAME_1: { type: String },
     FORENAME_2: { type: String },
     CUSTOMER_ACRONYM: { type: String },
-    CUSTOMER_GENDER: {
-      type: String,
-      enum: ["Male", "Female", "Corporate", "Other"],
-    },
+
     DATE_OF_BIRTH: { type: Date },
     PLACE_OF_BIRTH: { type: String },
     MARITAL_STATUS: { type: String },
@@ -50,6 +47,13 @@ const quotationSchema = new mongoose.Schema({
     NATIONAL_ID_NUMBER: { type: String },
     OCCUPATION: { type: String },
   },
+  agentData: {
+    category: { type: String, enum: ["agent", "blocker"] },
+    selectedBlocker: { type: String, default: null },
+    selectedAgent: { type: String, default: null },
+    email: { type: String, default: null },
+    phoneNumber: { type: String, default: null },
+  },
   plan: { type: String, required: true },
   discount: { type: Number, default: 1 },
   members: [memberSchema],
@@ -63,12 +67,12 @@ const quotationSchema = new mongoose.Schema({
     Platinum: optionSchema,
     "Platinum Plus": optionSchema,
   },
-  benefits: [
-    {
-      value: { type: String, required: true },
-      label: { type: String, required: true },
-    },
-  ],
+  // benefits: [
+  //   {
+  //     value: { type: String, required: true },
+  //     label: { type: String, required: true },
+  //   },
+  // ],
   status: {
     type: String,
     enum: [
@@ -82,7 +86,7 @@ const quotationSchema = new mongoose.Schema({
     ],
     default: "Waiting",
   },
-  totalMembers:{type:Number},
+  totalMembers: { type: Number },
   createdAt: { type: Date, default: Date.now },
   ValidityPeriod: { type: Date, required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -92,7 +96,6 @@ const quotationSchema = new mongoose.Schema({
     default: null,
   },
 });
-
 
 const LowCostQuotation = mongoose.model("LowCost", quotationSchema);
 

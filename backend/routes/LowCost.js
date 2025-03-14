@@ -13,6 +13,8 @@ router.get("/rejected", quotationController.rejectedQuotations);
 router.get("/search", quotationController.searchCustomerByName);
 router.get("/blocked", quotationController.blockedQuotations);
 router.put("/:id", quotationController.updateCooperateStatus);
+router.get("/all/admin", quotationController.adminDocs);
+router.get("/zose", quotationController.getAll);
 router.put("/lowcostQuotation/:id", quotationController.updateLowcostQuotation);
 router.get("/:id/download", quotationController.downloadCertificate);
 module.exports = router;

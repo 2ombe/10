@@ -105,25 +105,7 @@ const RetailDetails = () => {
             </Card.Body>
           </Card>
         </Row>
-      <Row>
-      <Card className="mb-3">
-            <Card.Body>
-              <Card.Title>Selected Benefits</Card.Title>
-              <Card.Text>
-                {quotation.benefits.length === 0 ? (
-                  <p>No benefits selected.</p>
-                ) : (
-                  <ul>
-                    {quotation.benefits.map((benefit, index) => (
-                      <li key={index}>{benefit.label}</li>
-                    ))}
-                  </ul>
-                )}
-              </Card.Text>
-            </Card.Body>
-          </Card>
-
-      </Row>
+    
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -138,7 +120,7 @@ const RetailDetails = () => {
             <td>{quotation.plan}</td>
             <td>{quotation.status}</td>
             <td>{new Date(quotation.createdAt).toLocaleDateString()}</td>
-            <td>{quotation.totalMembers}</td>
+            <td>{(quotation.totalMembers)-1}</td>
           </tr>
         </tbody>
       </Table>
@@ -155,7 +137,7 @@ const RetailDetails = () => {
           <tr>
 
           <td>{quotation.principalAgeGroup||""}</td>
-          <td>{quotation.spouseAgeGroup||""}</td>
+          <td>{quotation.spouseAgeGroup||<span>No Spouse</span>}</td>
           </tr>
         </tbody>
         <h4>Children Info</h4>
@@ -168,8 +150,8 @@ const RetailDetails = () => {
         <tbody>
           {quotation.children.map((child, index) => (
             <tr key={index}>
-              <td>{child.ageGroup||""}</td>
-              <td>{child.above18 ? 'Yes' : 'No'}</td>
+              <td>{child.ageGroup||<span>No Child</span>}</td>
+              <td>{child.above18 ? 'Yes' : 'No'||<span>No Child</span>}</td>
             </tr>
           ))}
         </tbody>
