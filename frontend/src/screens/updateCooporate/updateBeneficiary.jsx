@@ -108,7 +108,7 @@ corporateCategory
               name="tin"
               value={tin}
               onChange={(e)=>setTin(e.target.value)}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -118,7 +118,7 @@ corporateCategory
               name="countryOfRegistration"
               value={countryOfRegistration}
               onChange={(e)=>setCountryOfRegistration(e.target.value)}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -138,7 +138,7 @@ corporateCategory
               name="telephoneNumber"
               value={telephoneNumber}
               onChange={(e)=>setTelephoneNumber(e.target.value)}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -148,7 +148,7 @@ corporateCategory
               name="email"
               value={email}
               onChange={(e)=>setEmail(e.target.value)}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -167,7 +167,7 @@ corporateCategory
               name="town"
               value={town}
               onChange={(e)=>setTown(e.target.value)}
-              required
+              
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -177,7 +177,7 @@ corporateCategory
               name="corporateCategory"
               value={corporateCategory}
               onChange={(e)=>setCorporateCategory(e.target.value)}
-              required
+              
             >
               <option value="">--Select corporate category--</option>
               <option value="Micro Enterprises">Micro Enterprises</option>

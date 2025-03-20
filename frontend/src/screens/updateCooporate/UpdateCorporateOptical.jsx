@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
 import CheckOutCooporateSteps from '../../component/CheckOutCooporateSteps';
-const optionThree = {
+const PremiumValuePerPerson = {
   "56,250": {
     OPTICAL: 56250,
     M: 9638,
@@ -133,105 +133,132 @@ const optionThree = {
   },
 };
 
-
-const optionFour = {
+const PremiumValuePerFamily = {
   "56,250": {
     OPTICAL: 56250,
-    M: 17423,
-    "M+1": 17423*2,
-    "M+2": 17423*3,
-    "M+3": 17423*4,
-    "M+4": 17423*5,
-    "M+5": 17423*6,
-    "M+6": 17423*7,
-    "M+7": 17423*8,
-    "M+8": 17423*9,
-    "M+9": 17423*10,
-    "M+10": 17423*11,
+    M: 9638,
+    "M+1": 12048,
+    "M+2": 15060,
+    "M+3": 18825,
+    "M+4": 23531,
+    "M+5": 29414,
+    "M+6": 36768,
+    "M+7": 45959,
+    "M+8": 57449,
+    "M+9": 71812,
+    "M+10":89764
   },
   "75,000": {
     OPTICAL: 75000,
-    M: 23231,
-    "M+1": 23231*2,
-    "M+2": 23231*3,
-    "M+3": 23231*4,
-    "M+4": 23231*5,
-    "M+5": 23231*6,
-    "M+6": 23231*7,
-    "M+7": 23231*8,
-    "M+8": 23231*9,
-    "M+9": 23231*10,
-    "M+10": 23231*11,
+    M: 12851,
+    "M+1": 16064,
+    "M+2": 20080,
+    "M+3": 25100,
+    "M+4": 31375,
+    "M+5": 39219,
+    "M+6": 49023,
+    "M+7": 61279,
+    "M+8": 76599,
+    "M+9": 95749,
+    "M+10":119686
+  },
+  "112,500": {
+    OPTICAL: 112500,
+    M: 19421,
+    "M+1": 24276,
+    "M+2": 30345,
+    "M+3": 37931,
+    "M+4": 47414,
+    "M+5": 59268,
+    "M+6": 74084,
+    "M+7": 92606,
+    "M+8": 115757,
+    "M+9": 144696,
+    "M+10":180870
   },
   "150,000": {
     OPTICAL: 150000,
-    M: 46461,
-    "M+1": 46461*2,
-    "M+2": 46461*3,
-    "M+3": 46461*4,
-    "M+4": 46461*5,
-    "M+5": 46461*6,
-    "M+6": 46461*7,
-    "M+7": 46461*8,
-    "M+8": 46461*9,
-    "M+9": 46461*10,
-    "M+10": 46461*11
+    M: 26000,
+    "M+1": 32500,
+    "M+2": 40625,
+    "M+3": 50781,
+    "M+4": 63476,
+    "M+5": 79345,
+    "M+6": 99181,
+    "M+7": 123976,
+    "M+8": 154970,
+    "M+9": 193713,
+    "M+10":242141
+  },
+  "187,500": {
+    OPTICAL: 187500,
+    M: 32569,
+    "M+1": 40712,
+    "M+2": 50890,
+    "M+3": 63612,
+    "M+4": 79515,
+    "M+5": 99394,
+    "M+6": 124242,
+    "M+7": 155303,
+    "M+8": 194128,
+    "M+9": 242660,
+    "M+10":303326
   },
   "225,000": {
     OPTICAL: 225000,
-    M: 69692,
-    "M+1": 69692*2,
-    "M+2": 69692*3,
-    "M+3": 69692*4,
-    "M+4": 69692*5,
-    "M+5": 69692*6,
-    "M+6": 69692*7,
-    "M+7": 69692*8,
-    "M+8": 69692*9,
-    "M+9": 69692*10,
-    "M+10": 69692*11,
+    M: 39139,
+    "M+1": 48924,
+    "M+2": 61155,
+    "M+3": 76443,
+    "M+4": 95554,
+    "M+5": 119443,
+    "M+6": 149303,
+    "M+7": 186629,
+    "M+8": 233286,
+    "M+9": 291608,
+    "M+10":364510
   },
   "300,000": {
     OPTICAL: 300000,
-    M: 92923,
-    "M+1": 92923*2,
-    "M+2": 92923*3,
-    "M+3": 92923*4,
-    "M+4": 92923*5,
-    "M+5": 92923*6,
-    "M+6": 92923*7,
-    "M+7": 92923*8,
-    "M+8": 92923*9,
-    "M+9": 92923*10,
-    "M+10": 92923*11,
+    M: 52185,
+    "M+1": 65232,
+    "M+2": 81539,
+    "M+3": 101924,
+    "M+4": 127405,
+    "M+5": 159257,
+    "M+6": 199071,
+    "M+7": 248839,
+    "M+8": 311048,
+    "M+9": 388811,
+    "M+10": 486013
   },
   "375,000": {
     OPTICAL: 375000,
-    M: 116153,
-    "M+1": 116153*2,
-    "M+2": 116153*3,
-    "M+3": 116153*4,
-    "M+4": 116153*5,
-    "M+5": 116153*6,
-    "M+6": 116153*7,
-    "M+7": 116153*8,
-    "M+8": 116153*9,
-    "M+9": 116153*10,
-    "M+10": 116153*11,
+    M: 64999,
+    "M+1": 81249,
+    "M+2": 101561,
+    "M+3": 126952,
+    "M+4": 158690,
+    "M+5": 198362,
+    "M+6": 247953,
+    "M+7": 309941,
+    "M+8": 387426,
+    "M+9": 484282,
+    "M+10":605353
   },
   "562,500": {
     OPTICAL: 562500,
-    M: 174230,
-    "M+1": 174230*2,
-    "M+2": 174230*3,
-    "M+3": 174230*4,
-    "M+4": 174230*5,
-    "M+5": 174230*6,
-    "M+6": 174230*7,
-    "M+7": 174230*8,
-    "M+8": 174230*8,
-    "M+9": 174230*10,
-    "M+10": 174230*11,
+    M: 97569,
+    "M+1": 121961,
+    "M+2": 152451,
+    "M+3": 190564,
+    "M+4": 238205,
+    "M+5": 297756,
+    "M+6": 372195,
+    "M+7": 465243,
+    "M+8": 581554,
+    "M+9": 726943,
+    "M+10":908679
   },
 };
 
@@ -260,27 +287,24 @@ function UpdateCooporateOptical() {
     };
     fetchData();
   }, [corpotateId,userInfo]);
-
-
   const calculateOverallDependenciesTotal = (opticalTotalDependencies) => {
-    if (!opticalTotalDependencies) return 0;
-  
     let opticalOverallTotal = 0;
     const labels = Object.keys(opticalTotalDependencies);
-  
+
     for (let i = 0; i < labels.length; i++) {
       opticalOverallTotal += opticalTotalDependencies[labels[i]] || 0;
     }
-  
+
     return opticalOverallTotal;
   };
 
-  const premiumData = 
-  opticalCategories.length > 0 && opticalCategories[0].opticalTotalDependencies
-    ? calculateOverallDependenciesTotal(opticalCategories[0].opticalTotalDependencies) < 15 
-      ?optionFour 
-      : optionThree
-    : null;
+// Function to get premium data based on selected category
+const getPremiumData = (selectedCategory) => {
+  return selectedCategory === "Per family" ? PremiumValuePerFamily : PremiumValuePerPerson;
+};
+
+  
+
    
     
 
@@ -321,6 +345,13 @@ function UpdateCooporateOptical() {
     setOpticalCategories(newCategories);
   };
   
+  const handleselectedCategoryChange = (id, e) => {
+    const newCategories = opticalCategories.map(opticalCategory =>
+      opticalCategory.id === id ? { ...opticalCategory, selectedCategory: e.target.value } : opticalCategory
+    );
+    setOpticalCategories(newCategories);
+  };
+
 
   const handleDependencyChange = (opticalId, label, e) => {
     const value = parseInt(e.target.value) || 0;
@@ -333,6 +364,7 @@ function UpdateCooporateOptical() {
   const calculateTotalPremiumValue = (opticalCategory) => {
     let opticalTotalPremiumValue = 0;
     const memberLabels = Array.from({ length: opticalCategory.opticalMembers + 1 }, (_, i) => (i === 0 ? 'M' : `M+${i}`));
+    const premiumData = getPremiumData(opticalCategory.selectedCategory)
     for (let i = 0; i < memberLabels.length; i++) {
       const label = memberLabels[i];
       const premiumValuePerMember = (premiumData[opticalCategory.opticalLimit]?.[label] || 0) * (opticalCategory.opticalDependencies[label] || 0);
@@ -342,62 +374,65 @@ function UpdateCooporateOptical() {
   };
 
   useEffect(() => {
-    const updatedCategories = opticalCategories.map(opticalCategory => {
-      let updatedTotalDependencies = { ...opticalCategory.opticalTotalDependencies };
-      const labels = Object.keys(opticalCategory.opticalDependencies);
-
-      for (let i = 0; i < labels.length; i++) {
-        const label = labels[i];
-        const value = opticalCategory.opticalDependencies[label] || 0;
-        let calculatedTotal = value;
-
-        if (label !== 'M') {
-          const numDependents = parseInt(label.slice(2));
-          calculatedTotal += numDependents * value;
+      const updatedCategories = opticalCategories.map(opticalCategory => {
+        let updatedTotalDependencies = { ...opticalCategory.opticalTotalDependencies };
+        const labels = Object.keys(opticalCategory.opticalDependencies);
+  
+        for (let i = 0; i < labels.length; i++) {
+          const label = labels[i];
+          const value = opticalCategory.opticalDependencies[label] || 0;
+          let calculatedTotal = value;
+  
+          if (label !== 'M') {
+            const numDependents = parseInt(label.slice(2));
+            calculatedTotal += numDependents * value;
+          }
+  
+          updatedTotalDependencies[label] = calculatedTotal;
         }
-
-        updatedTotalDependencies[label] = calculatedTotal;
-      }
-
-      let opticalTotalPremiumValue = calculateTotalPremiumValue(opticalCategory);
-      let opticalTotalPremiumMValue = opticalTotalPremiumValue;
-
-      const opticalPremiumValues = Object.keys(opticalCategory.opticalDependencies).reduce((acc, key) => {
-        acc[key] = premiumData[opticalCategory.opticalLimit]?.[key] || 0;
-        return acc;
-      }, {});
-
-      const opticalTotalPremiumValues = Object.keys(opticalCategory.opticalDependencies).reduce((acc, key) => {
-        acc[key] = (premiumData[opticalCategory.opticalLimit]?.[key] || 0) * (opticalCategory.opticalDependencies[key] || 0);
-        return acc;
-      }, {});
-
-      return {
-        ...opticalCategory,
-        opticalTotalDependencies: updatedTotalDependencies,
-        opticalTotalPremium: opticalTotalPremiumValue,
-        opticalTotalPremiumM: opticalTotalPremiumMValue,
-        opticalPremiumValues,
-        opticalTotalPremiumValues,
-      };
-    });
-    setOpticalCategories(updatedCategories);
-  }, [JSON.stringify (opticalCategories.map(opticalCategory => opticalCategory.opticalDependencies))]);
-
-  const calculateOverallTotals = () => {
-    let opticalOverallTotalPremium = 0;
-    let opticalOverallDependenciesTotal
- = 0;
-
-    opticalCategories.forEach(opticalCategory => {
-      opticalOverallTotalPremium += opticalCategory.opticalTotalPremium;
-      opticalOverallDependenciesTotal
- += calculateOverallDependenciesTotal(opticalCategory.opticalTotalDependencies);
-    });
-
-    return { opticalOverallTotalPremium, opticalOverallDependenciesTotal
- };
-  };
+  
+        let opticalTotalPremiumValue = calculateTotalPremiumValue(opticalCategory);
+        let opticalTotalPremiumMValue = opticalTotalPremiumValue;
+  
+        const premiumData = getPremiumData(opticalCategory.selectedCategory)
+  
+        const opticalPremiumValues = Object.keys(opticalCategory.opticalDependencies).reduce((acc, key) => {
+          acc[key] = premiumData[opticalCategory.opticalLimit]?.[key] || 0;
+          return acc;
+        }, {});
+  
+        const opticalTotalPremiumValues = Object.keys(opticalCategory.opticalDependencies).reduce((acc, key) => {
+          acc[key] = (premiumData[opticalCategory.opticalLimit]?.[key] || 0) * (opticalCategory.opticalDependencies[key] || 0);
+          return acc;
+        }, {});
+  
+        return {
+          ...opticalCategory,
+          opticalTotalDependencies: updatedTotalDependencies,
+          opticalTotalPremium: opticalTotalPremiumValue,
+          opticalTotalPremiumM: opticalTotalPremiumMValue,
+          opticalPremiumValues,
+          opticalTotalPremiumValues,
+        
+        };
+      });
+      setOpticalCategories(updatedCategories);
+    }, [opticalCategories.map(opticalCategory => opticalCategory.opticalDependencies)]);
+  
+    const calculateOverallTotals = () => {
+      let opticalOverallTotalPremium = 0;
+      let opticalOverallDependenciesTotal
+   = 0;
+  
+      opticalCategories.forEach(opticalCategory => {
+        opticalOverallTotalPremium += opticalCategory.opticalTotalPremium;
+        opticalOverallDependenciesTotal
+   += calculateOverallDependenciesTotal(opticalCategory.opticalTotalDependencies);
+      });
+  
+      return { opticalOverallTotalPremium, opticalOverallDependenciesTotal
+   };
+    };
 
   const handleSave = () => {
     const opticalOverallTotals = calculateOverallTotals();
@@ -412,8 +447,10 @@ function UpdateCooporateOptical() {
 
   
    const renderCategoryTables = () => {
-    return opticalCategories.map(opticalCategory => (
-      <div key={opticalCategory.opticalId}>
+    return opticalCategories.map(opticalCategory => {
+      const premiumData=getPremiumData(opticalCategory.selectedCategory)
+      return(
+<div key={opticalCategory.opticalId}>
         <Row className="my-4">
           <Col>
             <h5>Category {opticalCategory.opticalId}</h5>
@@ -477,7 +514,9 @@ function UpdateCooporateOptical() {
           </Col>
         </Row>
       </div>
-    ));
+      )
+      
+    });
   };
   
   const opticalOverallTotals = calculateOverallTotals();

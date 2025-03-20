@@ -128,7 +128,7 @@ function GeneralInclusions() {
       localStorage.setItem("generalInclusionBenefits", JSON.stringify(selectedBenefits));
       dispatch({ type: "SET_GENERAL_INCLUSION_BENEFITS", payload: selectedBenefits });
       console.log("Selected Benefits:", selectedBenefits);
-      navigate("/cooporate");
+      navigate("/kpi");
     };
   
     return (

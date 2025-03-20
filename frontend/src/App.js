@@ -155,6 +155,7 @@ import AdminRetailList from "./screens/AdminRetailList.jsx";
 import AdminIshemaList from "./screens/AdminIshemaList.jsx";
 import AdminLowcostList from "./screens/AdminLowcostList.jsx";
 import AdminSmeList from "./screens/AdminSMEList.jsx";
+import KpiScreen from "./Cooporate/KpiScreen.jsx";
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(AuthContext);
   const { userInfo } = state;
@@ -441,6 +442,7 @@ function App() {
                 path="/updateIncooporate/:id"
                 element={<UpdateCooporateInpatient />}
               />
+              <Route path="/kpi" element={<KpiScreen />} />
               <Route
                 path="/updateOutcooporate/:id"
                 element={<UpdateCooporateOutPatient />}
